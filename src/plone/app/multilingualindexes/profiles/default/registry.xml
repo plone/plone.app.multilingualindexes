@@ -10,11 +10,36 @@
        <value key="enabled">True</value>
        <value key="sortable">False</value>
        <value key="operations">
-            <element>plone.app.querystring.operation.string.absolutePath</element>
-            <element>plone.app.querystring.operation.string.path</element>
-            <element>plone.app.querystring.operation.string.relativePath</element>
+            <element>plone.app.querystring.operation.string.absoluteTGPath</element>
+            <element>plone.app.querystring.operation.string.pathTG</element>
+            <element>plone.app.querystring.operation.string.relativeTGPath</element>
        </value>
        <value key="group" i18n:translate="">Metadata</value>
+    </records>
+
+<!-- QueryOperation declarations  -->
+    <records interface="plone.app.querystring.interfaces.IQueryOperation"
+             prefix="plone.app.querystring.operation.string.absoluteTGPath">
+        <value key="title" i18n:translate="">Absolute path (Language Independent)</value>
+        <value key="description" i18n:translate="">Location in the site structure, language independent</value>
+        <value key="operation">plone.app.multilingualindexes.tgpath.operation_absolute_tg_path</value>
+        <value key="widget">ReferenceWidget</value>
+    </records>
+
+    <records interface="plone.app.querystring.interfaces.IQueryOperation"
+             prefix="plone.app.querystring.operation.string.pathTG">
+        <value key="title" i18n:translate="">Navigation path (Language Independent)</value>
+        <value key="description" i18n:translate="">Location in the navigation structure, language independent</value>
+        <value key="operation">plone.app.multilingualindexes.tgpath.operation_navigation_tg_path</value>
+        <value key="widget">ReferenceWidget</value>
+    </records>
+
+    <records interface="plone.app.querystring.interfaces.IQueryOperation"
+             prefix="plone.app.querystring.operation.string.relativeTGPath">
+        <value key="title" i18n:translate="">Relative path (Language Independent)</value>
+        <value key="description" i18n:translate="">Use '../' to navigate to parent objects.</value>
+        <value key="operation">plone.app.multilingualindexes.tgpath.operation_relative_tg_path</value>
+        <value key="widget">RelativePathWidget</value>
     </records>
 
 </registry>
