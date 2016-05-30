@@ -1,0 +1,20 @@
+<!-- Operation Definitions -->
+<registry xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+          i18n:domain="plone.app.mulilingualindexes">
+
+<!-- QueryField declarations  -->
+    <records interface="plone.app.querystring.interfaces.IQueryField"
+             prefix="plone.app.querystring.field.tgpath">
+       <value key="title" i18n:translate="">Location (Language Independent)</value>
+       <value key="description" i18n:translate="">The location of an item and all its languages.</value>
+       <value key="enabled">True</value>
+       <value key="sortable">False</value>
+       <value key="operations">
+            <element>plone.app.querystring.operation.string.absolutePath</element>
+            <element>plone.app.querystring.operation.string.path</element>
+            <element>plone.app.querystring.operation.string.relativePath</element>
+       </value>
+       <value key="group" i18n:translate="">Metadata</value>
+    </records>
+
+</registry>

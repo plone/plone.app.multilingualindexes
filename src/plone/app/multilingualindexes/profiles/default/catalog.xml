@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<object
+    meta_type="Plone Catalog Tool"
+    name="portal_catalog">
+  <index
+      meta_type="ExtendedPathIndex"
+      name="tgpath"
+  />
+</object>
