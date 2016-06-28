@@ -72,7 +72,6 @@ def _tg_path_by_root(root, context, row):
         # query
         values = values.rstrip('/')
     query['query'] = [values]
-    print {row.index: query}
     return {row.index: query}
 
 
@@ -112,5 +111,4 @@ def operation_relative_tg_path(context, row):
         query['depth'] = depth
         values = values.rstrip('/')
     query['query'] = [values]
-    print {row.index: query}
     return {row.index: query}
