@@ -71,7 +71,6 @@ class LanguageFallbackIndex(UnIndex):
             if old_obj_langs != set():
                 for old_lang in old_obj_langs:
                     self.removeForwardIndexEntry(old_lang, documentId)
-                if obj_lang is _marker:
                     res = 1
                     try:
                         for old_lang in old_obj_langs:
@@ -99,7 +98,7 @@ class LanguageFallbackIndex(UnIndex):
         for lang in fallbacks:
             if lang in translated_langs:
                 self.removeForwardIndexEntry(lang, documentId)
-                if self._unindex[documentId].has_key(lang):
+                if lang in self._unindex[documentId]:
                     self._unindex[documentId].remove(lang)
                 continue
             if self.translationWithHigherFallbackExists(lang,
@@ -107,7 +106,7 @@ class LanguageFallbackIndex(UnIndex):
                                                         translated_langs,
                                                         obj.REQUEST):
                 self.removeForwardIndexEntry(lang, documentId)
-                if self._unindex[documentId].has_key(lang):
+                if lang in self._unindex[documentId]:
                     self._unindex[documentId].remove(lang)
                 continue
             self.insertForwardIndexEntry(lang, documentId)
@@ -120,6 +119,7 @@ class LanguageFallbackIndex(UnIndex):
                 continue
             self._unindex[documentId].remove(lang)
             self.removeForwardIndexEntry(lang, documentId)
+            res = True
         return res
 
     def unindex_object(self, documentId):
