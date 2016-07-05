@@ -36,4 +36,8 @@
       permission="cmf.ManagePortal"
       class=".controlpanel.MultiLingualIndexPanelView"
   />
+  <subscriber
+      for="plone.registry.interfaces.IRecordModifiedEvent"
+      handler=".utils.validate_fallback_record_change"
+    />
 </configure>

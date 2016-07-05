@@ -1,19 +1,13 @@
-from zope.interface import Interface
-from zope.schema import Dict
-from zope.schema import List
-from zope.schema import Choice
+# -*- coding: utf-8 -*-
 from plone.app.registry.browser.controlpanel import ControlPanelFormWrapper
 from plone.app.registry.browser.controlpanel import RegistryEditForm
 from plone.z3cform import layout
+from zope.interface import Interface
+from zope.schema import Text
 
 
 class IMultilingualIndexPanel(Interface):
-    fallback_languages = Dict(title=u'Fallbacks',
-                              key_type=Choice(
-                                  vocabulary='plone.app.vocabularies.SupportedContentLanguages'
-                              ),
-                              value_type=List()
-                              )
+    fallback_languages = Text(title=u'Fallbacks (json)')
 
 
 class MultilingualIndexControlPanel(RegistryEditForm):
