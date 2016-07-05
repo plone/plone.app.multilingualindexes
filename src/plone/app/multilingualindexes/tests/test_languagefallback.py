@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from plone import api
 from plone.app.multilingual.interfaces import ITranslationManager
-from plone.app.multilingualindexes.languagefallback import set_configuration
 from plone.app.multilingualindexes.testing import PAMI_FUNCTIONAL_TESTING
 
+import json
 import unittest
 
 
@@ -16,7 +16,7 @@ class TestLFB(unittest.TestCase):
         self.portal = self.layer['portal']
         self.request = self.layer['request']
         self.index = self.portal.portal_catalog.Indexes['Language2']
-        set_configuration(dict(ca=[], en=[], es=[]))
+        self.set_config(dict(ca=[], en=[], es=[]))
 
     def make_obj(self, lang, title='Test'):
         doc = api.content.create(
@@ -33,6 +33,11 @@ class TestLFB(unittest.TestCase):
                                                       SearchableText='Test',
                                                       Language2=lang)]
 
+    def set_config(self, config):
+        api.portal.set_registry_record(
+            'multilingualindex.fallback_languages',
+            json.dumps(dict(config)).decode('utf-8'))
+
     def test_case_1(self):
         """
         No fallbacks
@@ -46,7 +51,7 @@ class TestLFB(unittest.TestCase):
         """
         1 Fallback
         """
-        set_configuration(dict(ca=['en'], en=[], es=[]))
+        self.set_config(dict(ca=['en'], en=[], es=[]))
         self.make_obj('en')
         self.assertEqual(1, len(self.search('ca')))
 
@@ -54,7 +59,7 @@ class TestLFB(unittest.TestCase):
         """
         Documents are same but not identified as same
         """
-        set_configuration(dict(ca=['en'], en=[], es=[]))
+        self.set_config(dict(ca=['en'], en=[], es=[]))
         self.make_obj('en')
         self.make_obj('ca')
         self.assertEqual(2, len(self.search('ca')))
@@ -64,7 +69,7 @@ class TestLFB(unittest.TestCase):
         """
         Documents are same
         """
-        set_configuration(dict(ca=['en'], en=[], es=[]))
+        self.set_config(dict(ca=['en'], en=[], es=[]))
         en_obj = self.make_obj('en')
         ca_obj = self.make_obj('ca')
         ITranslationManager(ca_obj).register_translation('en', en_obj)
@@ -75,7 +80,7 @@ class TestLFB(unittest.TestCase):
         """
         Documents become the same, later
         """
-        set_configuration(dict(ca=['en'], en=[], es=[]))
+        self.set_config(dict(ca=['en'], en=[], es=[]))
         en_obj = self.make_obj('en')
         ca_obj = self.make_obj('ca')
         self.assertEqual(2, len(self.search('ca')))
@@ -88,7 +93,7 @@ class TestLFB(unittest.TestCase):
         """
         Do we leave no residue in index on deletion
         """
-        set_configuration(dict(ca=['en'], en=[], es=[]))
+        self.set_config(dict(ca=['en'], en=[], es=[]))
         # english portal gets reindexed on object creation
         # so we add it to the empty index too
         self.portal.portal_catalog.reindexObject(self.portal.en)
@@ -105,7 +110,7 @@ class TestLFB(unittest.TestCase):
         """
         What is the desired behavior with two fallbacks
         """
-        set_configuration(dict(ca=['en', 'es'], en=[], es=[]))
+        self.set_config(dict(ca=['en', 'es'], en=[], es=[]))
         en_obj = self.make_obj('en')
         self.make_obj('es')
         self.assertEqual(2, len(self.search('ca')))
@@ -123,7 +128,7 @@ class TestLFB(unittest.TestCase):
         """
         No fallback needed any more
         """
-        set_configuration(dict(ca=['en'], en=[], es=[]))
+        self.set_config(dict(ca=['en'], en=[], es=[]))
         en_obj = self.make_obj('en')
         self.assertEqual(1, len(self.search('ca')))
         ca_obj = self.make_obj('ca')

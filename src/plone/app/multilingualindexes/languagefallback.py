@@ -3,6 +3,7 @@ from App.class_init import InitializeClass
 from App.special_dtml import DTMLFile
 from logging import getLogger
 from plone.app.multilingual.interfaces import ITranslationManager
+from plone.app.multilingualindexes.utils import get_configuration
 from Products.CMFPlone.utils import safe_hasattr
 from Products.DateRecurringIndex.index import DateRecurringIndex
 from Products.PluginIndexes.common.UnIndex import UnIndex
@@ -12,19 +13,6 @@ from ZODB.POSException import ConflictError
 
 logger = getLogger(__name__)
 _marker = object()
-
-
-CONFIG = {}
-
-
-def get_configuration():
-    global CONFIG
-    return CONFIG
-
-
-def set_configuration(config):
-    global CONFIG
-    CONFIG = config
 
 
 class LanguageFallbackIndex(UnIndex):
@@ -54,8 +42,8 @@ class LanguageFallbackIndex(UnIndex):
                 'LanguageFallbackIndex cant work w/o knowing about its catalog'
             )
 
-    def getLangsIFallbackFor(self, lang):
-        for primary_lang, fallbacks in get_configuration().items():
+    def getLangsIFallbackFor(self, lang, req):
+        for primary_lang, fallbacks in get_configuration(req).items():
             if lang in fallbacks:
                 yield primary_lang
 
@@ -89,7 +77,7 @@ class LanguageFallbackIndex(UnIndex):
         wrapped_obj = obj._getWrappedObject()
         translated_langs = set(ITranslationManager(wrapped_obj)
                                .get_translations().keys()) - {obj_lang}
-        fallbacks = set(self.getLangsIFallbackFor(obj.Language))
+        fallbacks = set(self.getLangsIFallbackFor(obj.Language, obj.REQUEST))
         for lang in fallbacks - translated_langs:
             self.insertForwardIndexEntry(lang, documentId)
             self._unindex[documentId].append(lang)
