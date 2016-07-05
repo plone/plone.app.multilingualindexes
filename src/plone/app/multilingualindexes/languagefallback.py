@@ -64,11 +64,14 @@ class LanguageFallbackIndex(UnIndex):
                         'one of the fallback_languages')
 
     def index_object(self, documentId, obj, threshold=None):
+        # Start handling the language of the object itself
         res = 0
         obj_lang = obj.Language or _marker
         old_obj_langs = self._unindex.get(documentId, set())
         if obj_lang not in old_obj_langs:
+            # Document language changed or new doc
             if old_obj_langs != set():
+                # Document is not new. Need to remove all fallbacks
                 for old_lang in old_obj_langs:
                     self.removeForwardIndexEntry(old_lang, documentId)
                     res = 1
@@ -85,10 +88,13 @@ class LanguageFallbackIndex(UnIndex):
                                          'it is not, for document: '
                                          '%r', documentId)
             if obj_lang is not _marker:
+                # Some language was set, so let us store it
+                # Overwriting any old fallbacks
                 self.insertForwardIndexEntry(obj_lang, documentId)
                 self._unindex[documentId] = OOTreeSet([obj_lang])
                 res = 1
         if obj_lang is _marker:
+            # No language is set, so no fallbacks can be set
             return res
         wrapped_obj = obj._getWrappedObject()
         translated_langs = (ITranslationManager(wrapped_obj)
@@ -96,7 +102,10 @@ class LanguageFallbackIndex(UnIndex):
         translated_langs.remove(obj_lang)
         fallbacks = self.getLangsIFallbackFor(obj.Language, obj.REQUEST)
         for lang in fallbacks:
+            # Add fallback entry, if all preconditions pass
             if lang in translated_langs:
+                # No fallback needed, so remove the fallback entry, if
+                # exists
                 self.removeForwardIndexEntry(lang, documentId)
                 if lang in self._unindex[documentId]:
                     self._unindex[documentId].remove(lang)
@@ -105,6 +114,7 @@ class LanguageFallbackIndex(UnIndex):
                                                         obj_lang,
                                                         translated_langs,
                                                         obj.REQUEST):
+                # Fallback with higher priority exists, remove fallback entry
                 self.removeForwardIndexEntry(lang, documentId)
                 if lang in self._unindex[documentId]:
                     self._unindex[documentId].remove(lang)
@@ -112,22 +122,18 @@ class LanguageFallbackIndex(UnIndex):
             self.insertForwardIndexEntry(lang, documentId)
             self._unindex[documentId].add(lang)
             res = True
-        for lang in fallbacks:
-            if lang not in translated_langs:
-                continue
-            if lang not in self._unindex[documentId]:
-                continue
-            self._unindex[documentId].remove(lang)
-            self.removeForwardIndexEntry(lang, documentId)
-            res = True
         return res
 
     def unindex_object(self, documentId):
         unindexRecord = self._unindex.get(documentId, set())
         if unindexRecord == set():
+            # Document was never indexed. Go home
             return None
 
         if len(unindexRecord) > 1:
+            # Document was being used as fallback in the past
+            # Collect all translated objects, as their status
+            # needs to be updated
             doc_path = self._catalog.paths[documentId]
             doc_to_unindex = self.caller.unrestrictedTraverse(doc_path)
             tm = ITranslationManager(doc_to_unindex)
