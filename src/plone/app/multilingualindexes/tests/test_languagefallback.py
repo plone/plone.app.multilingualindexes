@@ -104,7 +104,12 @@ class TestLFB(unittest.TestCase):
         api.content.delete(doc)
         self.assertEqual(0, len(self.search('ca')))
         self.assertEqual(index, dict(self.index._index))
-        self.assertEqual(unindex, dict(self.index._unindex))
+        self.assertEqual(unindex.keys(), dict(self.index._unindex).keys())
+
+        def listify(treeset):
+            return [list(x) for x in treeset]
+        self.assertEqual(listify(unindex.values()),
+                         listify(dict(self.index._unindex).values()))
 
     def test_case_7(self):
         """
@@ -112,16 +117,13 @@ class TestLFB(unittest.TestCase):
         """
         self.set_config(dict(ca=['en', 'es'], en=[], es=[]))
         en_obj = self.make_obj('en')
-        self.make_obj('es')
-        self.assertEqual(2, len(self.search('ca')))
-        # self.assertEqual(('???', 'en'), self.search('ca'))
-        # If the result should be 1 here, we would have to do more extensive
-        # checks during index. For each language, we must check, if there are
-        # other languages of higher priority. Then we must check the TG
-        # to see, if any of these languages exists.
-        # On unindex, we must check, if any TG with lower prio exists.
+        es_obj = self.make_obj('es')
+        ITranslationManager(en_obj).register_translation('es', es_obj)
+        self.portal.portal_catalog.reindexObject(es_obj)
+        self.portal.portal_catalog.reindexObject(en_obj)
+        self.assertEqual(['/plone/en/test'], self.search('ca'))
         api.content.delete(en_obj)
-        # self.assertEqual(('???', 'es'), self.search('ca'))
+        self.assertEqual(['/plone/es/test'], self.search('ca'))
         self.assertEqual(1, len(self.search('ca')))
 
     def test_case_8(self):
