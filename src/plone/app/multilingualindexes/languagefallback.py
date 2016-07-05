@@ -5,11 +5,13 @@ from BTrees.OOBTree import OOTreeSet
 from logging import getLogger
 from plone.app.multilingual.interfaces import ITranslationManager
 from plone.app.multilingualindexes.utils import get_configuration
+from plone.indexer.interfaces import IIndexableObject
 from Products.CMFPlone.utils import safe_hasattr
 from Products.DateRecurringIndex.index import DateRecurringIndex
 from Products.PluginIndexes.common.UnIndex import UnIndex
 from Products.ZCatalog.Catalog import Catalog
 from ZODB.POSException import ConflictError
+from zope.component import getMultiAdapter
 
 
 logger = getLogger(__name__)
@@ -63,7 +65,7 @@ class LanguageFallbackIndex(UnIndex):
         raise Exception('Programming Error, my_language must be '
                         'one of the fallback_languages')
 
-    def index_object(self, documentId, obj, threshold=None):
+    def index_object(self, documentId, obj, threshold=None, recursive=True):
         # Start handling the language of the object itself
         res = 0
         obj_lang = obj.Language or _marker
@@ -97,8 +99,9 @@ class LanguageFallbackIndex(UnIndex):
             # No language is set, so no fallbacks can be set
             return res
         wrapped_obj = obj._getWrappedObject()
-        translated_langs = (ITranslationManager(wrapped_obj)
-                            .get_translations().keys())
+        tm = ITranslationManager(wrapped_obj)
+        translations = tm.get_translations()
+        translated_langs = translations.keys()
         translated_langs.remove(obj_lang)
         fallbacks = self.getLangsIFallbackFor(obj.Language, obj.REQUEST)
         for lang in fallbacks:
@@ -122,6 +125,18 @@ class LanguageFallbackIndex(UnIndex):
             self.insertForwardIndexEntry(lang, documentId)
             self._unindex[documentId].add(lang)
             res = True
+        if recursive:
+            for translated_obj in translations.values():
+                if translated_obj is wrapped_obj:
+                    continue
+                translated_path = '/'.join(translated_obj.getPhysicalPath())
+                translated_uid = self._catalog.uids[translated_path]
+                wrapped_translated = getMultiAdapter(
+                    (translated_obj, self.caller),
+                    IIndexableObject)
+                self.index_object(translated_uid, wrapped_translated,
+                                  recursive=False)
+
         return res
 
     def unindex_object(self, documentId):

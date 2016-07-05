@@ -23,9 +23,6 @@ class TestLFB(unittest.TestCase):
             container=self.portal[lang],
             type='Document',
             title=title)
-        # XX We do a reindex here because an event handler sets Language
-        # too late. We could copy that event handler though
-        self.portal.portal_catalog.reindexObject(doc)
         return doc
 
     def search(self, lang):
@@ -111,7 +108,7 @@ class TestLFB(unittest.TestCase):
         self.assertEqual(listify(unindex.values()),
                          listify(dict(self.index._unindex).values()))
 
-    def test_case_7(self):
+    def test_case_7_1(self):
         """
         What is the desired behavior with two fallbacks
         """
@@ -119,14 +116,26 @@ class TestLFB(unittest.TestCase):
         en_obj = self.make_obj('en')
         es_obj = self.make_obj('es')
         ITranslationManager(en_obj).register_translation('es', es_obj)
-        self.portal.portal_catalog.reindexObject(es_obj)
-        self.portal.portal_catalog.reindexObject(en_obj)
         self.assertEqual(['/plone/en/test'], self.search('ca'))
         api.content.delete(en_obj)
         self.assertEqual(['/plone/es/test'], self.search('ca'))
         self.assertEqual(1, len(self.search('ca')))
 
-    def test_case_8(self):
+    def test_case_7_2(self):
+        """
+        What is the desired behavior with two fallbacks
+        (Swap the register translation)
+        """
+        self.set_config(dict(ca=['en', 'es'], en=[], es=[]))
+        en_obj = self.make_obj('en')
+        es_obj = self.make_obj('es')
+        ITranslationManager(es_obj).register_translation('en', en_obj)
+        self.assertEqual(['/plone/en/test'], self.search('ca'))
+        api.content.delete(en_obj)
+        self.assertEqual(['/plone/es/test'], self.search('ca'))
+        self.assertEqual(1, len(self.search('ca')))
+
+    def test_case_8_1(self):
         """
         No fallback needed any more
         """
@@ -134,9 +143,17 @@ class TestLFB(unittest.TestCase):
         en_obj = self.make_obj('en')
         self.assertEqual(1, len(self.search('ca')))
         ca_obj = self.make_obj('ca')
-        # I think it is a bug that register Translation does not index
-        # both objects.
         ITranslationManager(en_obj).register_translation('ca', ca_obj)
-        self.portal.portal_catalog.reindexObject(ca_obj)
-        self.portal.portal_catalog.reindexObject(en_obj)
+        self.assertEqual(['/plone/ca/test'], self.search('ca'))
+
+    def test_case_8_2(self):
+        """
+        No fallback needed any more
+        (Swap the register translation)
+        """
+        self.set_config(dict(ca=['en'], en=[], es=[]))
+        en_obj = self.make_obj('en')
+        self.assertEqual(1, len(self.search('ca')))
+        ca_obj = self.make_obj('ca')
+        ITranslationManager(ca_obj).register_translation('en', en_obj)
         self.assertEqual(['/plone/ca/test'], self.search('ca'))
