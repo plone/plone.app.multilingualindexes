@@ -14,7 +14,8 @@ PAMI_FIXTURE = PloneWithPackageLayer(
     name='PAMILayer:Fixture',
     gs_profile_id='plone.app.multilingualindexes:default',
     zcml_package=plone.app.multilingualindexes,
-    zcml_filename='configure.zcml'
+    zcml_filename='configure.zcml',
+    additional_z2_products=['plone.app.multilingualindexes']
 )
 
 

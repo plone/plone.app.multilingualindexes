@@ -42,4 +42,12 @@
         <value key="widget">RelativePathWidget</value>
     </records>
 
+    <record name="multilingualindex.fallback_languages">
+        <field type="plone.registry.field.Text">
+            <title>Fallback languages</title>
+            <description>Define fallback languages</description>
+        </field>
+        <value>{"de": ["en", "at"]}</value>
+    </record>
+
 </registry>

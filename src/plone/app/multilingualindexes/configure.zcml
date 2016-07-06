@@ -2,7 +2,12 @@
     i18n_domain="plone.app.multilingualindexes"
     xmlns="http://namespaces.zope.org/zope"
     xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
-    xmlns:i18n="http://namespaces.zope.org/i18n">
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:i18n="http://namespaces.zope.org/i18n"
+    xmlns:five="http://namespaces.zope.org/five">
+  <five:registerPackage
+      package="."
+      initialize=".initialize" />
   <i18n:registerTranslations directory="locales" />
   <includeDependencies package="." />
   <genericsetup:registerProfile
@@ -29,4 +34,14 @@
       factory=".tgpath.tg_path_indexer"
       name="tgpath"
   />
+  <browser:page
+      name="multilingualindex-controlpanel"
+      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+      permission="cmf.ManagePortal"
+      class=".controlpanel.MultiLingualIndexPanelView"
+  />
+  <subscriber
+      for="plone.registry.interfaces.IRecordModifiedEvent"
+      handler=".utils.validate_fallback_record_change"
+    />
 </configure>
