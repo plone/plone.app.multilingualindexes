@@ -8,7 +8,6 @@
     />
   <index
       meta_type="LanguageFallbackIndex"
-      name="Language2">
-    <indexed_attr value="Language"/>
+      name="LanguageOrFallback">
   </index>
 </object>
