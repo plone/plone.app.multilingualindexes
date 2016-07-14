@@ -185,6 +185,10 @@ class LanguageFallbackIndex(UnIndex):
 manage_addDRIndexForm = DTMLFile('www/addDRIndex', globals())
 
 
+def fallback_finder(context, row):
+    return {'LanguageOrFallback': 'de'}
+
+
 def manage_addDRIndex(
     context,
     indexid,
