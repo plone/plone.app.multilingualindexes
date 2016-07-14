@@ -117,7 +117,8 @@ class LanguageFallbackIndex(UnIndex):
             if lang in translated_langs:
                 # No fallback needed, so remove the fallback entry, if
                 # exists
-                self.removeForwardIndexEntry(lang, documentId)
+                if documentId in self._index.get(lang, []):
+                    self.removeForwardIndexEntry(lang, documentId)
                 if lang in self._unindex[documentId]:
                     self._unindex[documentId].remove(lang)
                 continue
