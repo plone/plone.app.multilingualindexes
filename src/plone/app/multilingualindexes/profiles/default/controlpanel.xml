@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<object
+    name="portal_controlpanel"
+    xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+    i18n:domain="plone"
+    purge="False">
+
+  <configlet
+      title="Multilingualindexes"
+      action_id="multilingualindexes"
+      category="plone-general"
+      condition_expr=""
+      icon_expr="string:${portal_url}/discussionitem_icon.png"
+      url_expr="string:${portal_url}/@@multilingualindex-controlpanel"
+      visible="True"
+      i18n:attributes="title">
+    <permission>Manage portal</permission>
+  </configlet>
+</object>
