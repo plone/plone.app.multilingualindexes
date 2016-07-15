@@ -52,17 +52,17 @@ def _tg_path_by_root(root, context, row):
     # operation helper
     # take care of absolute paths without root
     values, depth = _extract_depth(row)
-    if not values.startswith(root):
-        values = root + values
+    target = None
     if '/' not in values:
         # a uid! little nasty thing, we're dealing with paths, why do you
         # appear here?
         cat = getToolByName(context, 'portal_catalog')
         brains = cat(UID=values)
-        if len(brains) != 1:
-            raise ValueError('Got unknown uid, can not resolve.')
-        target = brains[0].getObject()
-    else:
+        if len(brains):
+            target = brains[0].getObject()
+    if not target:
+        if not values.startswith(root):
+            values = root + '/' + values
         target = context.unrestrictedTraverse(values)
     values = '/'.join(tg_path(target))
     query = {}
