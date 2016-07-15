@@ -14,8 +14,8 @@ Features
 ``tgpath``
     Utility and index to get the path of an item as UUIDs of its translationgroup.
 
-fallback ``language`` drop-in index
-    Index to query items and get fallbacks if not available in the current language.
+``LanguageOrFallback`` index
+    Index to query items and get one fallback if not available in the current language.
     Fallbacks can be configured in control-panel and are stored in the registry.
 
 

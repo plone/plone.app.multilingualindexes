@@ -66,8 +66,12 @@ class LanguageFallbackIndex(UnIndex):
                         'one of the fallback_languages')
 
     def index_object(self, documentId, obj, threshold=None, recursive=True):
+        res = False
+        # Ensure that Language and TranslationGroup Index get executed first
+        for index in ['Language', 'TranslationGroup']:
+            res |= self.__parent__.indexes[index].index_object(documentId, obj,
+                                                               threshold)
         # Start handling the language of the object itself
-        res = 0
         obj_lang = obj.Language or _marker
         old_obj_langs = self._unindex.get(documentId, set())
         if obj_lang not in old_obj_langs:
@@ -102,14 +106,19 @@ class LanguageFallbackIndex(UnIndex):
         tm = ITranslationManager(wrapped_obj)
         translations = tm.get_translations()
         translated_langs = translations.keys()
-        translated_langs.remove(obj_lang)
+        if obj_lang in translated_langs:
+            # it can happen, that our index gets called before the Language
+            # Index gets called. In that case, our document might not
+            # be registered yet as translated langs
+            translated_langs.remove(obj_lang)
         fallbacks = self.getLangsIFallbackFor(obj.Language, obj.REQUEST)
         for lang in fallbacks:
             # Add fallback entry, if all preconditions pass
             if lang in translated_langs:
                 # No fallback needed, so remove the fallback entry, if
                 # exists
-                self.removeForwardIndexEntry(lang, documentId)
+                if documentId in self._index.get(lang, []):
+                    self.removeForwardIndexEntry(lang, documentId)
                 if lang in self._unindex[documentId]:
                     self._unindex[documentId].remove(lang)
                 continue
@@ -140,6 +149,9 @@ class LanguageFallbackIndex(UnIndex):
         return res
 
     def unindex_object(self, documentId):
+        # Ensure that Language and TranslationGroup Index get executed first
+        for index in ['Language', 'TranslationGroup']:
+            self.__parent__.indexes[index].unindex_object(documentId)
         unindexRecord = self._unindex.get(documentId, set())
         if unindexRecord == set():
             # Document was never indexed. Go home
@@ -171,6 +183,10 @@ class LanguageFallbackIndex(UnIndex):
             self.caller.reindexObject(doc, idxs=[self.id])
 
 manage_addDRIndexForm = DTMLFile('www/addDRIndex', globals())
+
+
+def fallback_finder(context, row):
+    return {'LanguageOrFallback': 'de'}
 
 
 def manage_addDRIndex(
