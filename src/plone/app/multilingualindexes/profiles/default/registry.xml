@@ -72,12 +72,14 @@
     <!--     <value key="widget"></value> -->
     <!-- </records> -->
 
+<!-- ControlPanel values  -->
+
     <record name="multilingualindex.fallback_languages">
         <field type="plone.registry.field.Text">
             <title>Fallback languages</title>
             <description>Define fallback languages</description>
         </field>
-        <value>{"de": ["en", "at"]}</value>
+        <value>{"de": ["en", "fr"]}</value>
     </record>
 
 </registry>

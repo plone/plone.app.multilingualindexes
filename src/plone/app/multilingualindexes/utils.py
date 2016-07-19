@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-from Products.CMFPlone.utils import safe_hasattr
 from plone import api
+from Products.CMFPlone.utils import safe_hasattr
 from zope.schema._bootstrapinterfaces import ValidationError
+
 import json
 
 

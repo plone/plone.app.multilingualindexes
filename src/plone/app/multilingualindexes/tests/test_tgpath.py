@@ -21,7 +21,7 @@ class TestTGpath(unittest.TestCase):
         doc = createContentInContainer(
             self.portal['ca'],
             'Document',
-            title=u"Test document"
+            title=u'Test document'
         )
         from plone.app.multilingual.interfaces import ITG
         from plone.app.multilingualindexes.tgpath import tg_path
@@ -39,7 +39,7 @@ class TestTGpath(unittest.TestCase):
         doc_ca = createContentInContainer(
             self.portal['ca'],
             'Document',
-            title=u"Test document"
+            title=u'Test document'
         )
         from plone.app.multilingual import api
         doc_en = api.translate(doc_ca, 'en')

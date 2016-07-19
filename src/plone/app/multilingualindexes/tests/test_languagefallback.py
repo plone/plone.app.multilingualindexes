@@ -15,7 +15,7 @@ class TestLFB(unittest.TestCase):
     def setUp(self):
         self.portal = self.layer['portal']
         self.request = self.layer['request']
-        self.index = self.portal.portal_catalog.Indexes['LanguageOrFallback']
+        self.index = self.portal.portal_catalog.Indexes['language_or_fallback']
         self.set_config(dict(ca=[], en=[], es=[]))
 
     def make_obj(self, lang, title='Test'):
@@ -28,7 +28,7 @@ class TestLFB(unittest.TestCase):
     def search(self, lang):
         return [x.getPath() for x in api.content.find(context=self.portal,
                                                       SearchableText='Test',
-                                                      LanguageOrFallback=lang)]
+                                                      language_or_fallback=lang)]
 
     def set_config(self, config):
         api.portal.set_registry_record(

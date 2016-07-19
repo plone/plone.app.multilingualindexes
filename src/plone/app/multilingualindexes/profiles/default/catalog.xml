@@ -4,10 +4,12 @@
     name="portal_catalog">
   <index
       meta_type="ExtendedPathIndex"
-      name="tgpath"
-    />
+      name="tgpath">
+    <indexed_attr value="tgpath" />
+  </index>
   <index
       meta_type="LanguageFallbackIndex"
-      name="LanguageOrFallback">
+      name="language_or_fallback">
+    <indexed_attr value="language_or_fallback" />
   </index>
 </object>

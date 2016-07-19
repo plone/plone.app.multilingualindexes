@@ -1,13 +1,15 @@
 <configure
     i18n_domain="plone.app.multilingualindexes"
     xmlns="http://namespaces.zope.org/zope"
-    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
     xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:five="http://namespaces.zope.org/five"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
     xmlns:i18n="http://namespaces.zope.org/i18n"
-    xmlns:five="http://namespaces.zope.org/five">
+    xmlns:plone="http://namespaces.plone.org/plone">
   <five:registerPackage
+      initialize=".initialize"
       package="."
-      initialize=".initialize" />
+  />
   <i18n:registerTranslations directory="locales" />
   <includeDependencies package="." />
   <genericsetup:registerProfile
@@ -16,7 +18,7 @@
       name="default"
       post_handler=".setuphandlers.post_install"
       provides="Products.GenericSetup.interfaces.EXTENSION"
-      title="plone.app.multilingualindexes"
+      title="Multilingual Indexes"
   />
   <genericsetup:registerProfile
       description="Uninstalls the plone.app.multilingualindexes add-on."
@@ -24,7 +26,7 @@
       name="uninstall"
       post_handler=".setuphandlers.uninstall"
       provides="Products.GenericSetup.interfaces.EXTENSION"
-      title="plone.app.multilingualindexes (uninstall)"
+      title="Multilingual Indexes (uninstall)"
   />
   <utility
       factory=".setuphandlers.HiddenProfiles"
@@ -35,13 +37,13 @@
       name="tgpath"
   />
   <browser:page
-      name="multilingualindex-controlpanel"
-      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
-      permission="cmf.ManagePortal"
       class=".controlpanel.MultiLingualIndexPanelView"
+      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+      name="multilingualindex-controlpanel"
+      permission="cmf.ManagePortal"
   />
   <subscriber
       for="plone.registry.interfaces.IRecordModifiedEvent"
       handler=".utils.validate_fallback_record_change"
-    />
+  />
 </configure>

@@ -3,6 +3,7 @@ from App.class_init import InitializeClass
 from App.special_dtml import DTMLFile
 from BTrees.OOBTree import OOTreeSet
 from logging import getLogger
+from plone import api
 from plone.app.multilingual.interfaces import ITranslationManager
 from plone.app.multilingualindexes.utils import get_configuration
 from plone.indexer.interfaces import IIndexableObject
@@ -186,7 +187,7 @@ manage_addDRIndexForm = DTMLFile('www/addDRIndex', globals())
 
 
 def fallback_finder(context, row):
-    return {'LanguageOrFallback': 'de'}
+    return {'language_or_fallback': api.portal.get_current_language()}
 
 
 def manage_addDRIndex(
