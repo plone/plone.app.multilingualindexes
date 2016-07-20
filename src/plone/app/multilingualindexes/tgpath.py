@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 from Acquisition import aq_inner
 from Acquisition import aq_parent
+from plone import api
 from plone.app.layout.navigation.root import getNavigationRoot
 from plone.app.multilingual.interfaces import ITG
 from plone.indexer import indexer
-from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.interfaces import IPloneSiteRoot
 from Products.CMFPlone.utils import base_hasattr
 from zope.interface import Interface
@@ -56,7 +56,7 @@ def _tg_path_by_root(root, context, row):
     if '/' not in values:
         # a uid! little nasty thing, we're dealing with paths, why do you
         # appear here?
-        cat = getToolByName(context, 'portal_catalog')
+        cat = api.portal.get_tool(name='portal_catalog')
         brains = cat(UID=values)
         if len(brains):
             target = brains[0].getObject()
@@ -80,9 +80,7 @@ def operation_navigation_tg_path(context, row):
 
 
 def operation_absolute_tg_path(context, row):
-    portal_url = getToolByName(context, 'portal_url')
-    portal = portal_url.getPortalObject()
-    root = '/'.join(portal.getPhysicalPath())
+    root = '/'.join(api.portal.get().getPhysicalPath())
     return _tg_path_by_root(root, context, row)
 
 
@@ -111,4 +109,7 @@ def operation_relative_tg_path(context, row):
         query['depth'] = depth
         values = values.rstrip('/')
     query['query'] = [values]
-    return {row.index: query}
+    return {
+        row.index: query,
+        'path': '/'.join(api.portal.get().getPhysicalPath())
+    }

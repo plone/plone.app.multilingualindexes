@@ -26,9 +26,11 @@ class TestLFB(unittest.TestCase):
         return doc
 
     def search(self, lang):
-        return [x.getPath() for x in api.content.find(context=self.portal,
-                                                      SearchableText='Test',
-                                                      language_or_fallback=lang)]
+        return [x.getPath() for x in api.content.find(
+            context=self.portal,
+            SearchableText='Test',
+            language_or_fallback=lang
+        )]
 
     def set_config(self, config):
         api.portal.set_registry_record(

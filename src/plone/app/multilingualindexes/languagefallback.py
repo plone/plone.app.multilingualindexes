@@ -187,7 +187,10 @@ manage_addDRIndexForm = DTMLFile('www/addDRIndex', globals())
 
 
 def fallback_finder(context, row):
-    return {'language_or_fallback': api.portal.get_current_language()}
+    return {
+        'language_or_fallback': api.portal.get_current_language(),
+        'path': '/'.join(api.portal.get().getPhysicalPath())
+    }
 
 
 def manage_addDRIndex(
