@@ -4,7 +4,7 @@
 
 <!-- QueryField declarations  -->
     <records interface="plone.app.querystring.interfaces.IQueryField"
-             prefix="plone.app.querystring.field.fallback_languages">
+             prefix="plone.app.querystring.field.language_or_fallback">
        <value key="title" i18n:translate="">Fallback languages</value>
        <value key="description" i18n:translate="">Which languages to find</value>
        <value key="enabled">True</value>
@@ -28,6 +28,19 @@
             <element>plone.app.querystring.operation.string.relativeTGPath</element>
        </value>
        <value key="group" i18n:translate="">Metadata</value>
+    </records>
+
+    <records interface="plone.app.querystring.interfaces.IQueryField"
+             prefix="plone.app.querystring.field.Language">
+       <value key="title" i18n:translate="">Language</value>
+       <value key="description" i18n:translate="">The language of the content.</value>
+       <value key="enabled">True</value>
+       <value key="sortable">False</value>
+        <value key="operations">
+            <element>plone.app.querystring.operation.selection.any</element>
+        </value>
+       <value key="vocabulary">plone.app.vocabularies.SupportedContentLanguages</value>
+       <value key="group" i18n:translate="">Text</value>
     </records>
 
 <!-- QueryOperation declarations  -->
@@ -63,14 +76,6 @@
         <value key="operation">plone.app.multilingualindexes.languagefallback.fallback_finder</value>
         <value key="widget"></value>
     </records>
-
-    <!-- <records interface="plone.app.querystring.interfaces.IQueryOperation" -->
-    <!--          prefix="plone.app.querystring.operation.boolean.all_languages"> -->
-    <!--     <value key="title" i18n:translate="">All Languages</value> -->
-    <!--     <value key="description" i18n:translate="">Find documents in all languages</value> -->
-    <!--     <value key="operation">plone.app.multilingualindexes.languagefallback.all_finder</value> -->
-    <!--     <value key="widget"></value> -->
-    <!-- </records> -->
 
 <!-- ControlPanel values  -->
 

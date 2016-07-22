@@ -109,7 +109,4 @@ def operation_relative_tg_path(context, row):
         query['depth'] = depth
         values = values.rstrip('/')
     query['query'] = [values]
-    return {
-        row.index: query,
-        'path': '/'.join(api.portal.get().getPhysicalPath())
-    }
+    return {row.index: query}

@@ -164,7 +164,9 @@ class LanguageFallbackIndex(UnIndex):
             # needs to be updated
             doc_path = self._catalog.paths[documentId]
             doc_to_unindex = self.caller.unrestrictedTraverse(doc_path)
-            tm = ITranslationManager(doc_to_unindex)
+            tm = ITranslationManager(doc_to_unindex, None)
+            if tm is None:
+                return
             translated_docs = tm.get_translations().values()
             if doc_to_unindex in translated_docs:
                 translated_docs.remove(doc_to_unindex)
@@ -187,10 +189,7 @@ manage_addDRIndexForm = DTMLFile('www/addDRIndex', globals())
 
 
 def fallback_finder(context, row):
-    return {
-        'language_or_fallback': api.portal.get_current_language(),
-        'path': '/'.join(api.portal.get().getPhysicalPath())
-    }
+    return {row.index: api.portal.get_current_language()}
 
 
 def manage_addDRIndex(

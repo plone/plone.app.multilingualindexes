@@ -46,4 +46,8 @@
       for="plone.registry.interfaces.IRecordModifiedEvent"
       handler=".utils.validate_fallback_record_change"
   />
+  <utility
+    component=".querymodifiers.modify_query_to_enforce_site_root"
+    name="0100"
+    />
 </configure>
