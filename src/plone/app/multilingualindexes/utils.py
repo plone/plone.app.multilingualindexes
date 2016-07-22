@@ -8,11 +8,18 @@ import json
 
 def get_configuration(request):
     try:
-        return request.plone_app_multilingualindexes_fallbacks
+        return request._plone_app_multilingualindexes_fallbacks_
     except AttributeError:
-        fallbacks = json.loads(api.portal.get_registry_record(
-            'multilingualindex.fallback_languages'))
-        setattr(request, 'plone_app_multilingualindexes_fallbacks', fallbacks)
+        fallbacks = json.loads(
+            api.portal.get_registry_record(
+                'multilingualindex.fallback_languages'
+            )
+        )
+        setattr(
+            request,
+            '_plone_app_multilingualindexes_fallbacks_',
+            fallbacks
+        )
         return fallbacks
 
 

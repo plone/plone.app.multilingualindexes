@@ -84,7 +84,7 @@
             <title>Fallback languages</title>
             <description>Define fallback languages</description>
         </field>
-        <value>{"de": ["en", "fr"]}</value>
+        <value>{"de": ["en"], "en": ["de"]}</value>
     </record>
 
 </registry>
