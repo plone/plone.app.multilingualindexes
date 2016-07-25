@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from Acquisition import aq_base
 from App.class_init import InitializeClass
 from App.special_dtml import DTMLFile
 from BTrees.OOBTree import OOTreeSet
@@ -73,7 +74,9 @@ class LanguageFallbackIndex(UnIndex):
             res |= self.__parent__.indexes[index].index_object(documentId, obj,
                                                                threshold)
         # Start handling the language of the object itself
-        obj_lang = getattr(obj, 'Language', _marker) or _marker
+        obj_lang = getattr(aq_base(obj), 'Language', _marker) or _marker
+        if callable(obj_lang):
+            obj_lang = obj_lang()
         old_obj_langs = self._unindex.get(documentId, set())
         if obj_lang not in old_obj_langs:
             # Document language changed or new doc
