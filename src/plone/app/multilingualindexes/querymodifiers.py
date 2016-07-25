@@ -69,6 +69,8 @@ def modify_query_to_enforce_site_root(query):
         if new_criteria['o'] in PATH_MAP:
             new_criteria['o'] = PATH_MAP[new_criteria['o']]
         query[idx_criteria] = new_criteria
+    elif has_tgpath_criteria:
+        _remove_criteria_by_index_name(query, 'tgpath')
 
     # always set path to the portal root in order to prevent the default query
     # modifier to set the path to the navigation root
