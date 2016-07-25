@@ -73,7 +73,7 @@ class LanguageFallbackIndex(UnIndex):
             res |= self.__parent__.indexes[index].index_object(documentId, obj,
                                                                threshold)
         # Start handling the language of the object itself
-        obj_lang = obj.Language or _marker
+        obj_lang = getattr(obj, 'Language', _marker) or _marker
         old_obj_langs = self._unindex.get(documentId, set())
         if obj_lang not in old_obj_langs:
             # Document language changed or new doc
