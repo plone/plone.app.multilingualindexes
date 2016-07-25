@@ -20,13 +20,47 @@ Features
 
 Integration with ``Collections``
     Both indexes are available in Collections and other places using ``plone.app.querystring`` under the hood.
+    Both indexes do only need activation.
+
+    ``tgpath`` is available as a switch ``Language independent location``.
+    If this is selected, the normal path will be converted to a tgpath!
+    If no path is selected this switch has no effect.
+
+    .. figure:: docs/querystring_tgpath.png
+       :scale: 100 %
+       :alt: Querystring selection with Translationgroup path
+
+
+    ``language_or_fallback`` is available as ``Fallback languages``.
+    If a path is selected together with this option, the path will be converted to a ``tgpath``.
+
     If the ``tgpath`` or ``language_or_fallback`` is used in a Collection, the ``path`` will be set to the portal.
     Thus the usal automatically added fixation to the current ``INavigationRoot`` wont be set,
     because language root folders are navigation roots.
 
-.. figure:: docs/index_manage_browse.png
-   :scale: 75 %
-   :alt: Browse the index to get a feeling what fallbacks are in there.
+    .. figure:: docs/querystring_fallback.png
+       :scale: 100 %
+       :alt: Querystring selection with Language fallback and (optional) location.
+
+
+Behind the scenes
+-----------------
+
+Fallback Index
+    It is in fact a simple FieldIndex.
+    Fallback detection happens on index time.
+    On query time it has the same functionality and performance as the normal Language index.
+
+    .. figure:: docs/index_manage_browse.png
+       :scale: 100 %
+       :alt: Browse the index to get a feeling what fallbacks are in there.
+
+Translation Group Index
+    It is in fact a normal ExtendendPathIndex.
+    Just the path it indexes consists out of the translation group uids.
+    If an item is not translatable and thus is not part of an translationgroup,
+    then its normal id is taken as patyh element.
+    Path example: ``/Plone/f5843e426b5d47cdb44af587b322f7ea/320b1ffbf0f64603803043d48bd57516``.
 
 
 Installation
