@@ -27,10 +27,24 @@ class LanguageFallbackIndex(UnIndex):
     meta_type = 'LanguageFallbackIndex'
     query_options = []
 
+    manage_options = (
+        {'label': 'Settings', 'action': 'manage_main'},
+        {'label': 'Browse', 'action': 'manage_browse'},
+    )
+
+    manage = manage_main = DTMLFile('www/manageLFBIndex', globals())
+    manage_main._setName('manage_main')
+    manage_browse = DTMLFile('www/browseIndex', globals())
+
     def __init__(self, id, ignore_ex=None, call_methods=None,
                  extra=None, caller=None):
-        UnIndex.__init__(self, id, ignore_ex=None, call_methods=None,
-                         extra=None, caller=None)
+        super(LanguageFallbackIndex, self).__init__(
+            id,
+            ignore_ex=ignore_ex,
+            call_methods=call_methods,
+            extra=extra,
+            caller=caller
+        )
         self.caller = caller
 
     @property
@@ -190,14 +204,10 @@ class LanguageFallbackIndex(UnIndex):
         for doc in translated_docs:
             self.caller.reindexObject(doc, idxs=[self.id])
 
-manage_addDRIndexForm = DTMLFile('www/addDRIndex', globals())
+manage_addLFBIndexForm = DTMLFile('www/addLFBIndex', globals())
 
 
-def fallback_finder(context, row):
-    return {row.index: api.portal.get_current_language()}
-
-
-def manage_addDRIndex(
+def manage_addLFBIndex(
     context,
     indexid,
     extra=None,
@@ -217,3 +227,8 @@ def manage_addDRIndex(
     )
 
 InitializeClass(DateRecurringIndex)
+
+
+def fallback_finder(context, row):
+    """Operation for plone.app.querystring"""
+    return {row.index: api.portal.get_current_language()}
