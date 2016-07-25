@@ -20,7 +20,10 @@ class TestUtils(unittest.TestCase):
         class FakeRequest(object):
             pass
         request = FakeRequest()
-        self.assertEqual({'de': ['en', 'at']}, get_configuration(request))
+        self.assertEqual(
+            {u'de': [u'en'], u'en': [u'de']},
+            get_configuration(request)
+        )
 
     def test_set_bad_fallbacks(self):
         self.assertRaises(ValidationError, api.portal.set_registry_record,
