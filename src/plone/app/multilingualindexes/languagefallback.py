@@ -104,7 +104,9 @@ class LanguageFallbackIndex(UnIndex):
             # No language is set, so no fallbacks can be set
             return res
         wrapped_obj = obj._getWrappedObject()
-        tm = ITranslationManager(wrapped_obj)
+        tm = ITranslationManager(wrapped_obj, None)
+        if tm is None:
+            return res
         translations = tm.get_translations()
         translated_langs = translations.keys()
         if obj_lang in translated_langs:
