@@ -54,6 +54,7 @@ setup(
             'plone.app.contenttypes',
             'plone.app.robotframework[debug]',
             'plone.app.multilingual[test]',
+            'plone.app.querystring > 1.3.999'
         ],
     },
     entry_points="""

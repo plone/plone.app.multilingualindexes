@@ -11,18 +11,22 @@ Indexes optimized to query multilingual content made with plone.app.multilingual
 Features
 --------
 
-``tgpath``
+``tgpath`` Index (Translation Group Path)
     Utility and index to get the path of an item as UUIDs of its translationgroup.
 
-``LanguageOrFallback`` index
+``language_or_fallback`` Index
     Index to query items and get one fallback if not available in the current language.
     Fallbacks can be configured in control-panel and are stored in the registry.
 
+Integration with ``Collections``
+    Both indexes are available in Collections and other places using ``plone.app.querystring`` under the hood.
+    If the ``tgpath`` or ``language_or_fallback`` is used in a Collection, the ``path`` will be set to the portal.
+    Thus the usal automatically added fixation to the current ``INavigationRoot`` wont be set,
+    because language root folders are navigation roots.
 
-Documentation
--------------
-
-Full documentation for end users can be found in the "docs" folder, and is also available online at http://docs.plone.org/foo/bar
+.. figure:: docs/index_manage_browse.png
+   :scale: 75 %
+   :alt: Browse the index to get a feeling what fallbacks are in there.
 
 
 Installation
