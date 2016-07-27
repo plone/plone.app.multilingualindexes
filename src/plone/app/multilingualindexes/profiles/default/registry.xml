@@ -12,7 +12,7 @@
        <value key="operations">
             <element>plone.app.querystring.operation.boolean.fallbacks</element>
        </value>
-       <value key="group" i18n:translate="">Metadata</value>
+       <value key="group" i18n:domain="plone" i18n:translate="">Metadata</value>
     </records>
 
     <records interface="plone.app.querystring.interfaces.IQueryField"
@@ -24,7 +24,7 @@
        <value key="operations">
             <element>plone.app.querystring.operation.boolean.tgpath</element>
        </value>
-       <value key="group" i18n:translate="">Metadata</value>
+       <value key="group" i18n:domain="plone" i18n:translate="">Metadata</value>
     </records>
 
     <records interface="plone.app.querystring.interfaces.IQueryField"
@@ -37,7 +37,7 @@
             <element>plone.app.querystring.operation.selection.any</element>
         </value>
        <value key="vocabulary">plone.app.vocabularies.SupportedContentLanguages</value>
-       <value key="group" i18n:translate="">Text</value>
+       <value key="group" i18n:domain="plone" i18n:translate="">Text</value>
     </records>
 
 <!-- QueryOperation declarations  -->
