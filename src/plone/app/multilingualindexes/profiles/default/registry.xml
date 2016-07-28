@@ -4,30 +4,6 @@
 
 <!-- QueryField declarations  -->
     <records interface="plone.app.querystring.interfaces.IQueryField"
-             prefix="plone.app.querystring.field.language_or_fallback">
-       <value key="title" i18n:translate="">Fallback languages</value>
-       <value key="description" i18n:translate="">Which languages to find</value>
-       <value key="enabled">True</value>
-       <value key="sortable">False</value>
-       <value key="operations">
-            <element>plone.app.querystring.operation.boolean.fallbacks</element>
-       </value>
-       <value key="group" i18n:domain="plone" i18n:translate="">Metadata</value>
-    </records>
-
-    <records interface="plone.app.querystring.interfaces.IQueryField"
-             prefix="plone.app.querystring.field.tgpath">
-       <value key="title" i18n:translate="">Language Independent Location</value>
-       <value key="description" i18n:translate="">If a location path is given consider it language independent and search in all its translations too.</value>
-       <value key="enabled">True</value>
-       <value key="sortable">False</value>
-       <value key="operations">
-            <element>plone.app.querystring.operation.boolean.tgpath</element>
-       </value>
-       <value key="group" i18n:domain="plone" i18n:translate="">Metadata</value>
-    </records>
-
-    <records interface="plone.app.querystring.interfaces.IQueryField"
              prefix="plone.app.querystring.field.Language">
        <value key="title" i18n:translate="">Language</value>
        <value key="description" i18n:translate="">The language of the content.</value>
@@ -38,6 +14,30 @@
         </value>
        <value key="vocabulary">plone.app.vocabularies.SupportedContentLanguages</value>
        <value key="group" i18n:domain="plone" i18n:translate="">Text</value>
+    </records>
+
+    <records interface="plone.app.querystring.interfaces.IQueryField"
+             prefix="plone.app.querystring.field.language_or_fallback">
+       <value key="title" i18n:translate="">Language with Fallback</value>
+       <value key="description" i18n:translate="">Which languages to find</value>
+       <value key="enabled">True</value>
+       <value key="sortable">False</value>
+       <value key="operations">
+            <element>plone.app.querystring.operation.boolean.fallbacks</element>
+       </value>
+       <value key="group" i18n:domain="plone" i18n:translate="">Text</value>
+    </records>
+
+    <records interface="plone.app.querystring.interfaces.IQueryField"
+             prefix="plone.app.querystring.field.tgpath">
+       <value key="title" i18n:translate="">Location (Language Independent)</value>
+       <value key="description" i18n:translate="">If a location path is given consider it language independent and search in all its translations too.</value>
+       <value key="enabled">True</value>
+       <value key="sortable">False</value>
+       <value key="operations">
+            <element>plone.app.querystring.operation.boolean.tgpath</element>
+       </value>
+       <value key="group" i18n:domain="plone" i18n:translate="">Metadata</value>
     </records>
 
 <!-- QueryOperation declarations  -->
