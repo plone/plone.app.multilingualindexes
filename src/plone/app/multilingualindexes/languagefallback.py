@@ -182,7 +182,11 @@ class LanguageFallbackIndex(UnIndex):
             # Collect all translated objects, as their status
             # needs to be updated
             doc_path = self._catalog.paths[documentId]
-            doc_to_unindex = self.caller.unrestrictedTraverse(doc_path)
+            try:
+                doc_to_unindex = self.caller.unrestrictedTraverse(doc_path)
+            except KeyError:
+                # doc_path is no longer valid, this may happen on move/rename
+                return
             tm = ITranslationManager(doc_to_unindex, None)
             if tm is None:
                 return
