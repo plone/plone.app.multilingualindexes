@@ -50,4 +50,13 @@
     component=".querymodifiers.modify_query_to_enforce_site_root"
     name="0100"
     />
+
+  <browser:page
+    name="tgpathcontentlisting"
+    class=".browser.TGPathFolderListing"
+    permission="zope2.View"
+    for="Products.CMFCore.interfaces.IFolderish"
+    />
+
+
 </configure>
