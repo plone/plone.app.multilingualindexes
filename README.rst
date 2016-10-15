@@ -26,7 +26,7 @@ Integration with ``Collections``
     If this is selected, the normal path will be converted to a tgpath!
     If no path is selected this switch has no effect.
 
-    .. figure:: docs/querystring_tgpath.png
+    .. figure:: https://raw.githubusercontent.com/plone/plone.app.multilingualindexes/master/docs/querystring_tgpath.png
        :scale: 100 %
        :alt: Querystring selection with Translationgroup path
 
@@ -38,7 +38,7 @@ Integration with ``Collections``
     Thus the usal automatically added fixation to the current ``INavigationRoot`` wont be set,
     because language root folders are navigation roots.
 
-    .. figure:: docs/querystring_fallback.png
+    .. figure:: https://raw.githubusercontent.com/plone/plone.app.multilingualindexes/master/docs/querystring_fallback.png
        :scale: 100 %
        :alt: Querystring selection with Language fallback and (optional) location.
 
@@ -51,7 +51,7 @@ Fallback Index
     Fallback detection happens on index time.
     On query time it has the same functionality and performance as the normal Language index.
 
-    .. figure:: docs/index_manage_browse.png
+    .. figure:: https://raw.githubusercontent.com/plone/plone.app.multilingualindexes/master/docs/querystring_fallback.png
        :scale: 100 %
        :alt: Browse the index to get a feeling what fallbacks are in there.
 
