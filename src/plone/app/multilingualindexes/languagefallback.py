@@ -81,7 +81,7 @@ class LanguageFallbackIndex(UnIndex):
         raise Exception('Programming Error, my_language must be '
                         'one of the fallback_languages')
 
-    def index_object(self, documentId, obj, threshold=None, recursive=True):
+    def index_object(self, documentId, obj, threshold=None, recursive=True):  # noqa: C901
         res = False
         # Ensure that Language and TranslationGroup Index get executed first
         for index in ['Language', 'TranslationGroup']:

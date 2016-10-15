@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from plone.app.contentlisting.interfaces import IContentListing
+from plone.app.multilingualindexes.tgpath import tg_path
 from Products.CMFCore.utils import getToolByName
 from zope.publisher.browser import BrowserView
-from plone.app.multilingualindexes.tgpath import tg_path
 
 
 class TGPathFolderListing(BrowserView):
