@@ -62,6 +62,16 @@ Translation Group Index
     then its normal id is taken as patyh element.
     Path example: ``/Plone/f5843e426b5d47cdb44af587b322f7ea/320b1ffbf0f64603803043d48bd57516``.
 
+    In order to query the index, you need to use the translationgroup path instead of the id path::
+
+      from plone.app.multilingualindexes.tgpath import tg_path
+      import plone.api
+
+      plone.api.content.find(
+          tgpath='/'.join(tg_path(context)),
+          language_or_fallback=plone.api.portal.get_current_language()
+      )
+
 
 Installation
 ------------
