@@ -38,8 +38,8 @@ setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=[
-        'Plone',
         'plone.api',
+        'Products.CMFPlone',
         'Products.GenericSetup>=1.8.2',
         'setuptools',
         'z3c.jbot',
