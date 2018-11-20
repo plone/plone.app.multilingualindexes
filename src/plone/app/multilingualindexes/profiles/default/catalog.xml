@@ -5,7 +5,10 @@
   <index
       meta_type="ExtendedPathIndex"
       name="tgpath">
-    <indexed_attr value="tgpath" />
+    <extra
+        name="indexed_attrs"
+        value="tgpath"
+    />
   </index>
   <index
       meta_type="LanguageFallbackIndex"
