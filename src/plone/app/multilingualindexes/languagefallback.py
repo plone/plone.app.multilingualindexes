@@ -96,11 +96,11 @@ class LanguageFallbackIndex(UnIndex):
             # Document language changed or new doc
             if old_obj_langs != set():
                 # Document is not new. Need to remove all fallbacks
-                for old_lang in old_obj_langs:
+                for old_lang in list(old_obj_langs):
                     self.removeForwardIndexEntry(old_lang, documentId)
                     res = 1
                     try:
-                        for old_lang in old_obj_langs:
+                        for old_lang in list(old_obj_langs):
                             self._unindex[documentId].remove(old_lang)
                         if not len(self._unindex[documentId]):
                             del self._unindex[documentId]
