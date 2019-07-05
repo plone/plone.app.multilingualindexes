@@ -22,6 +22,7 @@ class TestLFB(unittest.TestCase):
         doc = api.content.create(
             container=self.portal[lang], type="Document", title=title
         )
+        doc.reindexObject()
         return doc
 
     def search(self, lang):
@@ -97,21 +98,22 @@ class TestLFB(unittest.TestCase):
         self.set_config(dict(ca=["en"], en=[], es=[]))
         # english portal gets reindexed on object creation
         # so we add it to the empty index too
-        self.portal.portal_catalog.reindexObject(self.portal.en)
-        index = dict(self.index._index)
-        unindex = dict(self.index._unindex)
+        self.portal.en.reindexObject()
+        # also check we have no ca, this also flushes catalog queue
+        self.assertEqual(0, len(self.search("ca")))
+        # check precondition
+        index_keys = dict(self.index._index).keys()
+        unindex_keys = dict(self.index._unindex).keys()
+        unindex_values = [list(self.index._unindex[x]) for x in self.index._unindex]
+        self.assertEqual(0, len(self.search("ca")))
         doc = self.make_obj("en")
         self.assertEqual(1, len(self.search("ca")))
         api.content.delete(doc)
         self.assertEqual(0, len(self.search("ca")))
-        self.assertEqual(index, dict(self.index._index))
-        self.assertEqual(unindex.keys(), dict(self.index._unindex).keys())
-
-        def listify(treeset):
-            return [list(x) for x in treeset]
-
+        self.assertEqual(index_keys, dict(self.index._index).keys())
+        self.assertEqual(unindex_keys, dict(self.index._unindex).keys())
         self.assertEqual(
-            listify(unindex.values()), listify(dict(self.index._unindex).values())
+            unindex_values, [list(self.index._unindex[x]) for x in self.index._unindex]
         )
 
     def test_case_7_1(self):

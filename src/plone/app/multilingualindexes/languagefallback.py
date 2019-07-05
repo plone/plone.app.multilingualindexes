@@ -59,7 +59,7 @@ class LanguageFallbackIndex(UnIndex):
             "LanguageFallbackIndex cant work w/o knowing about its catalog"
         )
 
-    def getLangsIFallbackFor(self, lang, req):
+    def getLangsIsFallbackFor(self, lang, req):
         retval = []
         for primary_lang, fallbacks in get_configuration(req).items():
             if lang in fallbacks:
@@ -84,12 +84,12 @@ class LanguageFallbackIndex(UnIndex):
         res = False
         # Start handling the language of the object itself
         obj_lang = getattr(aq_base(obj), "Language", _marker) or _marker
-        if callable(obj_lang):
-            obj_lang = obj_lang()
-        old_obj_langs = self._unindex.get(documentId, set())
         if obj_lang is _marker:
             # No language is set, so no fallbacks can be set
             return res
+        if callable(obj_lang):
+            obj_lang = obj_lang()
+        old_obj_langs = self._unindex.get(documentId, set())
         if obj_lang not in old_obj_langs:
             # Document language changed or new doc
             if old_obj_langs != set():
@@ -126,7 +126,7 @@ class LanguageFallbackIndex(UnIndex):
             # Index gets called. In that case, our document might not
             # be registered yet as translated langs
             translated_langs.remove(obj_lang)
-        fallbacks = self.getLangsIFallbackFor(obj.Language, obj.REQUEST)
+        fallbacks = self.getLangsIsFallbackFor(obj.Language, obj.REQUEST)
         for lang in fallbacks:
             # Add fallback entry, if all preconditions pass
             if lang in translated_langs:
@@ -148,58 +148,45 @@ class LanguageFallbackIndex(UnIndex):
             self.insertForwardIndexEntry(lang, documentId)
             self._unindex[documentId].add(lang)
             res = True
-        if recursive:
-            for translated_obj in translations.values():
-                if translated_obj is wrapped_obj:
-                    continue
-                translated_path = "/".join(translated_obj.getPhysicalPath())
-                translated_uid = self._catalog.uids[translated_path]
-                wrapped_translated = getMultiAdapter(
-                    (translated_obj, self.caller), IIndexableObject
-                )
-                self.index_object(translated_uid, wrapped_translated, recursive=False)
-
+        if not recursive:
+            # were done
+            return res
+        for translated_obj in translations.values():
+            if translated_obj is wrapped_obj:
+                continue
+            translated_path = "/".join(translated_obj.getPhysicalPath())
+            translated_uid = self._catalog.uids[translated_path]
+            wrapped_translated = getMultiAdapter(
+                (translated_obj, self.caller), IIndexableObject
+            )
+            self.index_object(translated_uid, wrapped_translated, recursive=False)
         return res
 
     def unindex_object(self, documentId):
-        unindexRecord = self._unindex.get(documentId, set())
-        if unindexRecord == set():
+        unindexRecord = self._unindex.get(documentId, _marker)
+        if unindexRecord is _marker:
             # Document was never indexed. Go home
             return None
 
-        if len(unindexRecord) > 1:
-            # Document was being used as fallback in the past
-            # Collect all translated objects, as their status
-            # needs to be updated
-            doc_path = self._catalog.paths[documentId]
-            try:
-                doc_to_unindex = self.caller.unrestrictedTraverse(doc_path)
-            except KeyError:
-                # doc_path is no longer valid, this may happen on move/rename
-                return
-            tm = ITranslationManager(doc_to_unindex, None)
-            if tm is None:
-                return
-            translated_docs = tm.get_translations().values()
-            if doc_to_unindex in translated_docs:
-                translated_docs.remove(doc_to_unindex)
-        else:
-            translated_docs = []
+        del self._unindex[documentId]
 
         for record in unindexRecord:
             self.removeForwardIndexEntry(record, documentId)
-        try:
-            del self._unindex[documentId]
-        except ConflictError:
-            raise
-        except Exception:
-            logger.debug(
-                "Attempt to unindex nonexistent document" " with id %r",
-                documentId,
-                exc_info=True,
+
+        # reindex other object in translationgroup
+        tg_idx = self._catalog.getIndex('TranslationGroup')
+        tg = tg_idx._unindex.get(documentId, None)
+        # get one out of tg (enough), because index_object is recursive
+        tg_obj_uids = tg_idx._index.get(tg, set()) - set([documentId])
+        if tg_obj_uids:
+            tg_obj_uid = tg_obj_uids[0]
+        else:
+            tg_obj_uid = None
+        if tg_obj_uid is not None:
+            tg_obj = self.caller.unrestrictedTraverse(
+                self._catalog.paths[tg_obj_uid]
             )
-        for doc in translated_docs:
-            self.caller.reindexObject(doc, idxs=[self.id])
+            self.index_object(tg_obj_uid, tg_obj)
 
 
 manage_addLFBIndexForm = DTMLFile("www/addLFBIndex", globals())

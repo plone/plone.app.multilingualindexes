@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 """Setup tests for this package."""
-from plone import api
 from plone.app.multilingualindexes.testing import PAMI_INTEGRATION_TESTING
 from Products.CMFPlone.utils import get_installer
 
