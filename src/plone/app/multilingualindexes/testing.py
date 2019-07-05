@@ -11,31 +11,25 @@ import plone.app.multilingualindexes
 
 PAMI_FIXTURE = PloneWithPackageLayer(
     bases=(PLONE_APP_MULTILINGUAL_PRESET_FIXTURE,),
-    name='PAMILayer:Fixture',
-    gs_profile_id='plone.app.multilingualindexes:default',
+    name="PAMILayer:Fixture",
+    gs_profile_id="plone.app.multilingualindexes:default",
     zcml_package=plone.app.multilingualindexes,
-    zcml_filename='configure.zcml',
-    additional_z2_products=['plone.app.multilingualindexes']
+    zcml_filename="configure.zcml",
+    additional_z2_products=["plone.app.multilingualindexes"],
 )
 
 
 PAMI_INTEGRATION_TESTING = IntegrationTesting(
-    bases=(PAMI_FIXTURE,),
-    name='PAMILayer:IntegrationTesting'
+    bases=(PAMI_FIXTURE,), name="PAMILayer:IntegrationTesting"
 )
 
 
 PAMI_FUNCTIONAL_TESTING = FunctionalTesting(
-    bases=(PAMI_FIXTURE,),
-    name='PAMILayer:FunctionalTesting'
+    bases=(PAMI_FIXTURE,), name="PAMILayer:FunctionalTesting"
 )
 
 
 PAMI_ACCEPTANCE_TESTING = FunctionalTesting(
-    bases=(
-        PAMI_FIXTURE,
-        REMOTE_LIBRARY_BUNDLE_FIXTURE,
-        z2.ZSERVER_FIXTURE
-    ),
-    name='PAMILayer:AcceptanceTesting'
+    bases=(PAMI_FIXTURE, REMOTE_LIBRARY_BUNDLE_FIXTURE, z2.ZSERVER_FIXTURE),
+    name="PAMILayer:AcceptanceTesting",
 )
