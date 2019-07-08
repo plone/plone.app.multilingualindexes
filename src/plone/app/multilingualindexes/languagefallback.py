@@ -16,6 +16,7 @@ from Products.PluginIndexes.common.UnIndex import UnIndex
 from Products.ZCatalog.Catalog import Catalog
 from ZODB.POSException import ConflictError
 from zope.component import getMultiAdapter
+from zope.component import queryAdapter
 from zope.globalrequest import getRequest
 
 logger = getLogger(__name__)
@@ -251,7 +252,7 @@ def annotate_documentid_to_tg(event):
     Thus we're able to unindex and reindex all objects in TG correctly
     """
     # get TG of old object
-    tg = ITG(event.object)
+    tg = queryAdapter(event.object, ITG)
     if not tg:
         return
     catalog = api.portal.get_tool("portal_catalog")
