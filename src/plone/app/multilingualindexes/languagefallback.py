@@ -120,7 +120,7 @@ class LanguageFallbackIndex(UnIndex):
         if tm is None:
             return res
         translations = tm.get_translations()
-        translated_langs = translations.keys()
+        translated_langs = list(translations.keys())
         if obj_lang in translations.keys():
             # it can happen, that our index gets called before the Language
             # Index gets called. In that case, our document might not

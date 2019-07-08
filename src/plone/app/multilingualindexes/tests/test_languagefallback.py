@@ -2,6 +2,7 @@
 from plone import api
 from plone.app.multilingual.interfaces import ITranslationManager
 from plone.app.multilingualindexes.testing import PAMI_FUNCTIONAL_TESTING
+from Products.CMFPlone.utils import safe_text
 
 import json
 import unittest
@@ -34,9 +35,10 @@ class TestLFB(unittest.TestCase):
         ]
 
     def set_config(self, config):
+        jsondata = json.dumps(dict(config))
         api.portal.set_registry_record(
             "multilingualindex.fallback_languages",
-            json.dumps(dict(config)).decode("utf-8"),
+            safe_text(jsondata),
         )
 
     def test_case_1(self):
