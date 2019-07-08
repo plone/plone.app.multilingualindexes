@@ -37,8 +37,7 @@ class TestLFB(unittest.TestCase):
     def set_config(self, config):
         jsondata = json.dumps(dict(config))
         api.portal.set_registry_record(
-            "multilingualindex.fallback_languages",
-            safe_text(jsondata),
+            "multilingualindex.fallback_languages", safe_text(jsondata)
         )
 
     def test_case_1(self):

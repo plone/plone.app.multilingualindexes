@@ -6,6 +6,7 @@ from BTrees.OOBTree import OOTreeSet
 from logging import getLogger
 from plone import api
 from plone.app.multilingual.events import ITranslationRegisteredEvent
+from plone.app.multilingual.interfaces import ITG
 from plone.app.multilingual.interfaces import ITranslationManager
 from plone.app.multilingualindexes.utils import get_configuration
 from plone.indexer.interfaces import IIndexableObject
@@ -15,9 +16,11 @@ from Products.PluginIndexes.common.UnIndex import UnIndex
 from Products.ZCatalog.Catalog import Catalog
 from ZODB.POSException import ConflictError
 from zope.component import getMultiAdapter
+from zope.globalrequest import getRequest
 
 logger = getLogger(__name__)
-_marker = object()
+_marker = set()  # must be an empty set, part of logic below
+_REQ_ANNOTAION = "_languagefallback_unindex_docid_to_tg_"
 
 
 class LanguageFallbackIndex(UnIndex):
@@ -59,24 +62,33 @@ class LanguageFallbackIndex(UnIndex):
             "LanguageFallbackIndex cant work w/o knowing about its catalog"
         )
 
-    def getLangsIsFallbackFor(self, lang, req):
-        retval = []
+    def get_primary_languages_of_fallback(self, lang, req):
+        """Iterator returning primary languages for a given fallback
+        """
         for primary_lang, fallbacks in get_configuration(req).items():
             if lang in fallbacks:
-                retval.append(primary_lang)
-        return retval
+                yield primary_lang
 
-    def translationWithHigherFallbackExists(
+    def has_translation_with_higher_prio_fallback(
         self, fallback_for_lang, my_language, translations, request
     ):
+        """Check if a translation exists with a higher priority fallback
+        """
         for fallback_lang in get_configuration(request)[fallback_for_lang]:
             if fallback_lang == my_language:
                 return False
             if fallback_lang in translations:
                 return True
         raise Exception(
-            "Programming Error, my_language must be " "one of the fallback_languages"
+            "Programming Error, 'my_language' must be one of the configured "
+            "fallback_languages!"
         )
+
+    def _remove_docid_for_language(self, documentId, language):
+        if documentId in self._index.get(language, []):
+            self.removeForwardIndexEntry(language, documentId)
+        if language in self._unindex[documentId]:
+            self._unindex[documentId].remove(language)
 
     def index_object(
         self, documentId, obj, threshold=None, recursive=True
@@ -89,64 +101,66 @@ class LanguageFallbackIndex(UnIndex):
             return res
         if callable(obj_lang):
             obj_lang = obj_lang()
-        old_obj_langs = self._unindex.get(documentId, set())
+        old_obj_langs = self._unindex.get(documentId, _marker)  # marker is empty
         if obj_lang not in old_obj_langs:
             # Document language changed or new doc
-            if old_obj_langs != set():
+            if old_obj_langs is not _marker:
                 # Document is not new. Need to remove all fallbacks
-                for old_lang in list(old_obj_langs):
+                old_obj_langs = list(old_obj_langs)
+                for old_lang in old_obj_langs:
                     self.removeForwardIndexEntry(old_lang, documentId)
                     res = 1
+                for old_lang in old_obj_langs:
                     try:
-                        for old_lang in list(old_obj_langs):
-                            self._unindex[documentId].remove(old_lang)
-                        if not len(self._unindex[documentId]):
-                            del self._unindex[documentId]
+                        self._unindex[documentId].remove(old_lang)
                     except ConflictError:
                         raise
                     except Exception:
                         logger.exception(
-                            "Should not happen: old_obj_lang was there, now "
-                            "it is not, for document: %r",
+                            "Should not happen: %s in old_obj_lang was there, "
+                            "now it is not, for document: %r",
+                            old_lang,
                             documentId,
                         )
+                if not len(self._unindex[documentId]):
+                    del self._unindex[documentId]
             # Some language was set, so let us store it
             # Overwriting any old fallbacks
             self.insertForwardIndexEntry(obj_lang, documentId)
             self._unindex[documentId] = OOTreeSet([obj_lang])
             res = 1
-        wrapped_obj = obj._getWrappedObject()
+        try:
+            wrapped_obj = obj._getWrappedObject()
+        except AttributeError:
+            wrapped_obj = obj
         tm = ITranslationManager(wrapped_obj, None)
         if tm is None:
             return res
         translations = tm.get_translations()
         translated_langs = list(translations.keys())
-        if obj_lang in translations.keys():
+        if obj_lang in translated_langs:
             # it can happen, that our index gets called before the Language
             # Index gets called. In that case, our document might not
             # be registered yet as translated langs
             translated_langs.remove(obj_lang)
-        fallbacks = self.getLangsIsFallbackFor(obj.Language, obj.REQUEST)
-        for lang in fallbacks:
+        # now we iterate over all possible primary languages and check if
+        # the current objects language is a possible fallback
+        for primary_lang in self.get_primary_languages_of_fallback(
+            obj_lang, obj.REQUEST
+        ):
             # Add fallback entry, if all preconditions pass
-            if lang in translated_langs:
-                # No fallback needed, so remove the fallback entry, if
-                # exists
-                if documentId in self._index.get(lang, []):
-                    self.removeForwardIndexEntry(lang, documentId)
-                if lang in self._unindex[documentId]:
-                    self._unindex[documentId].remove(lang)
-                continue
-            if self.translationWithHigherFallbackExists(
-                lang, obj_lang, translated_langs, obj.REQUEST
+            if (
+                primary_lang in translated_langs
+                or self.has_translation_with_higher_prio_fallback(
+                    primary_lang, obj_lang, translated_langs, obj.REQUEST
+                )
             ):
-                # Fallback with higher priority exists, remove fallback entry
-                self.removeForwardIndexEntry(lang, documentId)
-                if lang in self._unindex[documentId]:
-                    self._unindex[documentId].remove(lang)
+                # No fallback needed or fallback with higher priority exists:
+                # remove fallback entry if exists
+                self._remove_docid_for_language(documentId, primary_lang)
                 continue
-            self.insertForwardIndexEntry(lang, documentId)
-            self._unindex[documentId].add(lang)
+            self.insertForwardIndexEntry(primary_lang, documentId)
+            self._unindex[documentId].add(primary_lang)
             res = True
         if not recursive:
             # were done
@@ -174,19 +188,26 @@ class LanguageFallbackIndex(UnIndex):
             self.removeForwardIndexEntry(record, documentId)
 
         # reindex other object in translationgroup
-        tg_idx = self._catalog.getIndex('TranslationGroup')
+        tg_idx = self._catalog.getIndex("TranslationGroup")
+        # try to get out of index
         tg = tg_idx._unindex.get(documentId, None)
+        if tg is None:
+            # fallback if TranslationGroup index was processed before.
+            request = getRequest()
+            annotation = getattr(request, _REQ_ANNOTAION, None)
+            if annotation is None:
+                return
+            tg = annotation.get(documentId, None)
+            if tg is None:
+                return
         # get one out of tg (enough), because index_object is recursive
-        tg_obj_uids = tg_idx._index.get(tg, set()) - set([documentId])
-        if tg_obj_uids:
-            tg_obj_uid = tg_obj_uids[0]
-        else:
-            tg_obj_uid = None
-        if tg_obj_uid is not None:
-            tg_obj = self.caller.unrestrictedTraverse(
-                self._catalog.paths[tg_obj_uid]
-            )
-            self.index_object(tg_obj_uid, tg_obj)
+        tg_obj_uids = set(tg_idx._index.get(tg, set())) - set([documentId])
+        if not tg_obj_uids:
+            # tg was unindexed before this index was processed.
+            return
+        tg_obj_uid = tg_obj_uids.pop()
+        tg_obj = self.caller.unrestrictedTraverse(self._catalog.paths[tg_obj_uid])
+        self.index_object(tg_obj_uid, tg_obj)
 
 
 manage_addLFBIndexForm = DTMLFile("www/addLFBIndex", globals())
@@ -223,3 +244,21 @@ def reindex_languagefallback(event):
         event.target.reindexObject(idxs=["language_or_fallback"])
     else:
         event.old_object.reindexObject(idxs=["language_or_fallback"])
+
+
+def annotate_documentid_to_tg(event):
+    """Annotates a mapping documentid to TG on the request.
+    Thus we're able to unindex and reindex all objects in TG correctly
+    """
+    # get TG of old object
+    tg = ITG(event.object)
+    if not tg:
+        return
+    catalog = api.portal.get_tool("portal_catalog")
+    rid = catalog.getrid("/".join(event.object.getPhysicalPath()))
+    request = getRequest()
+    annotation = getattr(request, _REQ_ANNOTAION, None)
+    if annotation is None:
+        annotation = {}
+        setattr(request, _REQ_ANNOTAION, annotation)
+    annotation[rid] = tg

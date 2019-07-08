@@ -70,7 +70,10 @@
       for="plone.app.multilingual.events.ITranslationRemovedEvent"
       handler=".languagefallback.reindex_languagefallback"
   />
-
+  <subscriber
+      for="OFS.interfaces.IObjectWillBeRemovedEvent"
+      handler=".languagefallback.annotate_documentid_to_tg"
+  />
 
 </configure>
 
