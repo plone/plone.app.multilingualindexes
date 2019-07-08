@@ -58,5 +58,22 @@
     for="Products.CMFCore.interfaces.IFolderish"
     />
 
+  <subscriber
+      for="plone.app.multilingual.events.ITranslationRegisteredEvent"
+      handler=".languagefallback.reindex_languagefallback"
+  />
+  <subscriber
+      for="plone.app.multilingual.events.ITranslationUpdatedEvent"
+      handler=".languagefallback.reindex_languagefallback"
+  />
+  <subscriber
+      for="plone.app.multilingual.events.ITranslationRemovedEvent"
+      handler=".languagefallback.reindex_languagefallback"
+  />
+  <subscriber
+      for="OFS.interfaces.IObjectWillBeRemovedEvent"
+      handler=".languagefallback.annotate_documentid_to_tg"
+  />
 
 </configure>
+

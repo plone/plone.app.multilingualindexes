@@ -21,6 +21,7 @@ var/
 # files
 .installed.cfg
 .mr.developer.cfg
+.python-version
 lib64
 log.html
 output.xml
