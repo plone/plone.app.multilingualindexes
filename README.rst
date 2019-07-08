@@ -6,6 +6,15 @@
 plone.app.multilingualindexes
 ==============================================================================
 
+.. image:: https://travis-ci.org/plone/plone.app.multilingualindexes.svg?branch=master
+    :target: https://travis-ci.org/plone/plone.app.multilingualindexes
+
+.. image:: https://img.shields.io/badge/code%20style-black-000000.svg
+    :target: https://github.com/python/black
+
+.. image:: https://coveralls.io/repos/github/plone/plone.app.multilingualindexes/badge.svg?branch=master
+    :target: https://coveralls.io/github/plone/plone.app.multilingualindexes?branch=master
+
 Indexes optimized to query multilingual content made with plone.app.multilingual.
 
 Features
