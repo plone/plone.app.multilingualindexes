@@ -2,11 +2,14 @@
 from plone import api
 from Products.CMFPlone.utils import safe_hasattr
 from zope.schema._bootstrapinterfaces import ValidationError
+from zope.globalrequest import getRequest
 
 import json
 
 
-def get_configuration(request):
+def get_configuration(request=None):
+    if request is None:
+        request = getRequest()
     try:
         return request._plone_app_multilingualindexes_fallbacks_
     except AttributeError:
