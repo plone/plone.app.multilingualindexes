@@ -147,13 +147,13 @@ class LanguageFallbackIndex(UnIndex):
         # now we iterate over all possible primary languages and check if
         # the current objects language is a possible fallback
         for primary_lang in self.get_primary_languages_of_fallback(
-            obj_lang, obj.REQUEST
+            obj_lang, getRequest()
         ):
             # Add fallback entry, if all preconditions pass
             if (
                 primary_lang in translated_langs
                 or self.has_translation_with_higher_prio_fallback(
-                    primary_lang, obj_lang, translated_langs, obj.REQUEST
+                    primary_lang, obj_lang, translated_langs, getRequest()
                 )
             ):
                 # No fallback needed or fallback with higher priority exists:
