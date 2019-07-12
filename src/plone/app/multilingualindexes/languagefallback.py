@@ -279,5 +279,4 @@ def annotate_documentid_to_tg(obj):
 def annotate_documentid_to_tg_subscriber(obj, event):
     """object event subscriber
     """
-    breakpoint()
     annotate_documentid_to_tg(obj)
