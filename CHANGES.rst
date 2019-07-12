@@ -4,6 +4,12 @@ Changelog
 2.0 (unreleased)
 ----------------
 
+- Patch CMFCore because of https://github.com/zopefoundation/Products.CMFCore/issues/79
+  [jensens]
+
+- Drop support of Plone 5.1
+  [jensens]
+
 - Python 3 compatibility
   [jensens]
 
