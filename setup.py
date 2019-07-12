@@ -37,7 +37,7 @@ setup(
     author_email="jk@kleinundpartner.at",
     url="https://pypi.python.org/pypi/plone.app.multilingualindexes",
     license="GPL version 2",
-    packages=find_packages("src", exclude=["ez_setup"]),
+    packages=find_packages("src"),
     namespace_packages=["plone", "plone.app"],
     package_dir={"": "src"},
     include_package_data=True,
