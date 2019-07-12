@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from zope.i18nmessageid import MessageFactory
 
+from . import patches  # noqa
 
 _ = MessageFactory("plone.app.multilingualindexes")
 

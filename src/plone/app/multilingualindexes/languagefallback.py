@@ -22,7 +22,7 @@ from zope.globalrequest import getRequest
 
 logger = getLogger(__name__)
 _marker = set()  # must be an empty set, part of logic below
-_REQ_ANNOTAION = "_languagefallback_unindex_docid_to_tg_"
+_REQ_ANNOTATION = "_languagefallback_unindex_docid_to_tg_"
 
 
 class LanguageFallbackIndex(UnIndex):
@@ -97,7 +97,7 @@ class LanguageFallbackIndex(UnIndex):
             self._unindex[documentId].remove(language)
 
     def index_object(
-        self, documentId, obj, threshold=None, recursive=True
+        self, documentId, obj, threshold=None, recursive=True, skip_tg=False
     ):  # noqa: C901
         res = False
         if not ITranslatable.providedBy(obj):
@@ -136,6 +136,7 @@ class LanguageFallbackIndex(UnIndex):
             # Overwriting any old fallbacks
             self.insertForwardIndexEntry(obj_lang, documentId)
             self._unindex[documentId] = OOTreeSet([obj_lang])
+            self._increment_counter()
             res = 1
 
         # in an index the obj can be wrapped by an indexable obj wrapper.
@@ -151,7 +152,8 @@ class LanguageFallbackIndex(UnIndex):
             return res
         # to be sure to have all translations in place, lets reindex the
         # translationgroup for our document first
-        self.caller.getIndex("TranslationGroup").index_object(documentId, obj)
+        if not skip_tg:
+            self.caller.getIndex("TranslationGroup").index_object(documentId, obj)
 
         # proceed with creating fallback entries
         translations = tm.get_translations()
@@ -178,6 +180,7 @@ class LanguageFallbackIndex(UnIndex):
             # Add fallback entry
             self.insertForwardIndexEntry(primary_lang, documentId)
             self._unindex[documentId].add(primary_lang)
+            self._increment_counter()
             res = True
         if not recursive:
             # were done
@@ -190,26 +193,35 @@ class LanguageFallbackIndex(UnIndex):
             wrapped_translated = getMultiAdapter(
                 (translated_obj, self.caller), IIndexableObject
             )
-            self.index_object(translated_uid, wrapped_translated, recursive=False)
+            self.index_object(
+                translated_uid, wrapped_translated, recursive=False, skip_tg=True
+            )
         return res
 
     def unindex_object(self, documentId):
         unindexRecord = self._unindex.get(documentId, _marker)
         if unindexRecord is _marker:
             # Document was never indexed. Go home
-            return None
+            return
 
         del self._unindex[documentId]
+        self._increment_counter()
 
         for record in unindexRecord:
             self.removeForwardIndexEntry(record, documentId)
 
+        if "TranslationGroup" not in self._catalog.indexes:
+            return
         tg_idx = self._catalog.getIndex("TranslationGroup")
 
         # reindex other object in translationgroup
         # the current tg must be available annotated
-        annotation = getattr(getRequest(), _REQ_ANNOTAION, None)
-        tg = annotation.get(documentId, None) if annotation is not None else None
+        tg = None
+        annotation = getattr(getRequest(), _REQ_ANNOTATION, None)
+        if annotation:
+            tg = annotation.get(documentId, None)
+            if tg:
+                del annotation[documentId]
         if tg is None:
             # annotations are only written on move/rename/delete
             # if this was not hte case we really must have it available
@@ -222,10 +234,10 @@ class LanguageFallbackIndex(UnIndex):
         if not tg_obj_uids:
             # no other translations available, were done
             return
-        # take one of the others in the TG and index it.
-        tg_obj_uid = tg_obj_uids.pop()
-        tg_obj = self.caller.unrestrictedTraverse(self._catalog.paths[tg_obj_uid])
-        self.index_object(tg_obj_uid, tg_obj)
+        # index others in the TG
+        for tg_obj_uid in tg_obj_uids:
+            tg_obj = self.caller.unrestrictedTraverse(self._catalog.paths[tg_obj_uid])
+            self.index_object(tg_obj_uid, tg_obj, recursive=False, skip_tg=True)
 
 
 manage_addLFBIndexForm = DTMLFile("www/addLFBIndex", globals())
@@ -264,8 +276,6 @@ def reindex_languagefallback(event):
         other = event.target
     else:
         other = event.old_object
-    # annotate_documentid_to_tg(event.object)
-    # annotate_documentid_to_tg(other)
     catalog.catalog_object(event.object, idxs=["language_or_fallback"])
     catalog.catalog_object(other, idxs=["language_or_fallback"])
 
@@ -283,10 +293,10 @@ def annotate_documentid_to_tg(obj):
         return
     rid = catalog.getrid("/".join(obj.getPhysicalPath()))
     request = getRequest()
-    annotation = getattr(request, _REQ_ANNOTAION, None)
+    annotation = getattr(request, _REQ_ANNOTATION, None)
     if annotation is None:
         annotation = {}
-        setattr(request, _REQ_ANNOTAION, annotation)
+        setattr(request, _REQ_ANNOTATION, annotation)
     annotation[rid] = tg
 
 
