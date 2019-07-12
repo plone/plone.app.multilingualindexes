@@ -257,14 +257,17 @@ def fallback_finder(context, row):
 def reindex_languagefallback(event):
     """Object event subscriber to reindex the index 'language_or_fallback'.
     """
+    catalog = api.portal.get_tool("portal_catalog")
+    if "language_or_fallback" not in catalog.indexes():
+        return
     if ITranslationRegisteredEvent.providedBy(event):
         other = event.target
     else:
         other = event.old_object
-    annotate_documentid_to_tg(event.object)
-    annotate_documentid_to_tg(other)
-    event.object.reindexObject(idxs=["language_or_fallback"])
-    other.reindexObject(idxs=["language_or_fallback"])
+    # annotate_documentid_to_tg(event.object)
+    # annotate_documentid_to_tg(other)
+    catalog.catalog_object(event.object, idxs=["language_or_fallback"])
+    catalog.catalog_object(other, idxs=["language_or_fallback"])
 
 
 def annotate_documentid_to_tg(obj):
@@ -276,6 +279,8 @@ def annotate_documentid_to_tg(obj):
     if not tg:
         return
     catalog = api.portal.get_tool("portal_catalog")
+    if "language_or_fallback" not in catalog.indexes():
+        return
     rid = catalog.getrid("/".join(obj.getPhysicalPath()))
     request = getRequest()
     annotation = getattr(request, _REQ_ANNOTAION, None)
