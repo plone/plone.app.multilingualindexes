@@ -5,6 +5,8 @@ from Products.CMFCore.interfaces import IIndexQueueProcessor
 from Products.CMFCore.interfaces import InvalidQueueOperation
 
 
+# see https://github.com/zopefoundation/Products.CMFCore/issues/79
+
 def process_patched(self):
     self.optimize()
     if not self.queue:
@@ -27,7 +29,7 @@ def process_patched(self):
             else:
                 raise InvalidQueueOperation(op)
         processed += 1
-    indexing.debug('finished processing %d items...', processed)
+    indexing.debug("finished processing %d items...", processed)
     self.clear()
     return processed
 
