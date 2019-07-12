@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.0 (unreleased)
+2.0 (2019-07-12)
 ----------------
 
 - Patch CMFCore because of https://github.com/zopefoundation/Products.CMFCore/issues/79
