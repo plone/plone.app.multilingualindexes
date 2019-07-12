@@ -1,4 +1,5 @@
 graft src/plone
 graft docs
 include *.rst
+include *.txt
 global-exclude *.pyc
