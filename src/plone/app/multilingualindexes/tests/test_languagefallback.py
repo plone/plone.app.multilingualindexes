@@ -150,7 +150,7 @@ class TestLFB(unittest.TestCase):
         """
         self.set_config(dict(ca=["en"], en=[], es=[]))
         en_obj = self.make_obj("en")
-        self.assertEqual(1, len(self.search("ca")))
+        self.assertEqual(["/plone/en/test"], self.search("ca"))
         ca_obj = self.make_obj("ca")
         ITranslationManager(en_obj).register_translation("ca", ca_obj)
         self.assertEqual(["/plone/ca/test"], self.search("ca"))

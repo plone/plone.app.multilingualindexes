@@ -7,10 +7,10 @@ from logging import getLogger
 from plone import api
 from plone.app.multilingual.events import ITranslationRegisteredEvent
 from plone.app.multilingual.interfaces import ITG
+from plone.app.multilingual.interfaces import ITranslatable
 from plone.app.multilingual.interfaces import ITranslationManager
 from plone.app.multilingualindexes.utils import get_configuration
 from plone.indexer.interfaces import IIndexableObject
-from Products.CMFCore.indexing import processQueue
 from Products.CMFPlone.utils import safe_hasattr
 from Products.DateRecurringIndex.index import DateRecurringIndex
 from Products.PluginIndexes.common.UnIndex import UnIndex
@@ -64,8 +64,8 @@ class LanguageFallbackIndex(UnIndex):
             "LanguageFallbackIndex cant work w/o knowing about its catalog"
         )
 
-    def get_primary_languages_of_fallback(self, lang):
-        """Iterator returning primary languages for a given fallback
+    def primary_languages_of_fallback(self, lang):
+        """Iterator of primary languages for a given fallback
         """
         for primary_lang, fallbacks in get_configuration().items():
             if lang in fallbacks:
@@ -100,6 +100,8 @@ class LanguageFallbackIndex(UnIndex):
         self, documentId, obj, threshold=None, recursive=True
     ):  # noqa: C901
         res = False
+        if not ITranslatable.providedBy(obj):
+            return res
         # Start handling the language of the object itself
         obj_lang = getattr(aq_base(obj), "Language", _marker) or _marker
         if obj_lang is _marker:
@@ -147,6 +149,11 @@ class LanguageFallbackIndex(UnIndex):
         tm = ITranslationManager(wrapped_obj, None)
         if tm is None:
             return res
+        # to be sure to have all translations in place, lets reindex the
+        # translationgroup for our document first
+        self.caller.getIndex("TranslationGroup").index_object(documentId, obj)
+
+        # proceed with creating fallback entries
         translations = tm.get_translations()
         translated_langs = list(translations.keys())
         if obj_lang in translated_langs:
@@ -154,20 +161,21 @@ class LanguageFallbackIndex(UnIndex):
             # Index gets called. In that case, our document might not
             # be registered yet as translated langs
             translated_langs.remove(obj_lang)
-        # now we iterate over all possible primary languages and check if
+        # Check if the object is a possible fallback for some other language.
+        # Iterate over all possible primary languages and check if
         # the current objects language is a possible fallback
-        for primary_lang in self.get_primary_languages_of_fallback(obj_lang):
-            # Add fallback entry, if all preconditions pass
+        for primary_lang in self.primary_languages_of_fallback(obj_lang):
             if (
-                primary_lang in translated_langs
+                primary_lang in translated_langs  # skip, we have a real translation
                 or self.has_translation_with_higher_prio_fallback(
                     primary_lang, obj_lang, translated_langs
-                )
+                )  # skip, we have a better fallback
             ):
                 # No fallback needed or fallback with higher priority exists:
                 # remove fallback entry if exists
                 self._remove_docid_for_language(documentId, primary_lang)
                 continue
+            # Add fallback entry
             self.insertForwardIndexEntry(primary_lang, documentId)
             self._unindex[documentId].add(primary_lang)
             res = True
@@ -249,13 +257,14 @@ def fallback_finder(context, row):
 def reindex_languagefallback(event):
     """Object event subscriber to reindex the index 'language_or_fallback'.
     """
-    event.object.reindexObject(idxs=["language_or_fallback"])
     if ITranslationRegisteredEvent.providedBy(event):
-        event.target.reindexObject(idxs=["language_or_fallback"])
+        other = event.target
     else:
-        event.old_object.reindexObject(idxs=["language_or_fallback"])
-    # ensure this is done before any other indexers running
-    # processQueue()
+        other = event.old_object
+    annotate_documentid_to_tg(event.object)
+    annotate_documentid_to_tg(other)
+    event.object.reindexObject(idxs=["language_or_fallback"])
+    other.reindexObject(idxs=["language_or_fallback"])
 
 
 def annotate_documentid_to_tg(obj):
