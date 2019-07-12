@@ -207,7 +207,7 @@ class LanguageFallbackIndex(UnIndex):
             # if this was not hte case we really must have it available
             tg = tg_idx._unindex.get(documentId, None)
             if tg is None:
-                logger.warning("No TG found for given documentId!")
+                # at this point we do not have any TG yet
                 return
         # get one out of tg (enough), because index_object is recursive
         tg_obj_uids = set(tg_idx._index.get(tg, set())) - set([documentId])
@@ -276,7 +276,8 @@ def annotate_documentid_to_tg(obj):
     annotation[rid] = tg
 
 
-def annotate_documentid_to_tg_subscriber(event):
+def annotate_documentid_to_tg_subscriber(obj, event):
+    """object event subscriber
     """
-    """
-    annotate_documentid_to_tg(event.object)
+    breakpoint()
+    annotate_documentid_to_tg(obj)
