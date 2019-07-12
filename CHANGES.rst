@@ -7,6 +7,9 @@ Changelog
 - Patch CMFCore because of https://github.com/zopefoundation/Products.CMFCore/issues/79
   [jensens]
 
+- Fix bugs on rename/move/delete (wrong fallbacks)
+  [jensens]
+
 - Drop support of Plone 5.1
   [jensens]
 
