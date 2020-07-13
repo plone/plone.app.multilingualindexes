@@ -1,9 +1,20 @@
 # -*- coding: utf-8 -*-
 from zope.i18nmessageid import MessageFactory
+from plone.app.querystring import queryparser
 
 from . import patches  # noqa
 
 _ = MessageFactory("plone.app.multilingualindexes")
+
+try:
+    # Adding 'tgpath' in plone.app.querystring for
+    # multipath functionality
+    queryparser.PATH_INDICES |= {'tgpath'}
+except AttributeError:
+    raise ImportError(
+        "plone.app.querystring doesn't support "
+        "multipath functionality."
+    )
 
 
 def initialize(context):
