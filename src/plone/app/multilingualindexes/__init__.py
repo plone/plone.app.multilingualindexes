@@ -6,15 +6,7 @@ from . import patches  # noqa
 
 _ = MessageFactory("plone.app.multilingualindexes")
 
-try:
-    # Adding 'tgpath' in plone.app.querystring for
-    # multipath functionality
-    queryparser.PATH_INDICES |= {'tgpath'}
-except AttributeError:
-    raise ImportError(
-        "plone.app.querystring doesn't support "
-        "multipath functionality."
-    )
+queryparser.PATH_INDICES |= {'tgpath'}
 
 
 def initialize(context):
