@@ -45,7 +45,7 @@ setup(
     install_requires=[
         "Products.CMFPlone",
         "setuptools",
-        "plone.app.querystding>=1.4.14",
+        "plone.app.querystring>=1.4.14",
     ],
     extras_require={
         "test": [
