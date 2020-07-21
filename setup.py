@@ -42,7 +42,11 @@ setup(
     package_dir={"": "src"},
     include_package_data=True,
     zip_safe=False,
-    install_requires=["Products.CMFPlone", "setuptools"],
+    install_requires=[
+        "Products.CMFPlone",
+        "setuptools",
+        "plone.app.querystding>=1.4.14",
+    ],
     extras_require={
         "test": [
             "plone.app.testing",
