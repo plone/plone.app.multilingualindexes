@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.1 (unreleased)
+2.1 (2020-08-04)
 ----------------
 
 - Patch that allows for using multiple paths, fixing issue https://github.com/plone/plone.app.multilingualindexes/issues/9
