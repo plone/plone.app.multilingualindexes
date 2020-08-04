@@ -46,6 +46,7 @@ setup(
         "setuptools",
         "Products.CMFPlone>=5.2.1",
         "plone.app.querystring>=1.4.14",
+        "plone.app.theming>=4.1.3",
     ],
     extras_require={
         "test": [
