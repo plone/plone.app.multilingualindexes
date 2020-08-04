@@ -15,16 +15,13 @@ PATH_MAP = {  # normal path to tg path
 }
 
 
-def _index_of_criteria(query, name):
-    for idx, criteria in enumerate(query):
-        if criteria["i"] == name:
-            return idx
+def _indices_of_criteria(query, name):
+    return [idx for idx, criteria in enumerate(query) if criteria["i"] == name]
 
 
 def _remove_criteria_by_index_name(query, name):
-    remove_idx = _index_of_criteria(query, name)
-    if remove_idx is not None:
-        del query[remove_idx]
+    remove_idxs = _indices_of_criteria(query, name)
+    return [i for idx, i in enumerate(query) if idx not in remove_idxs]
 
 
 @provider(IQueryModifier)
@@ -52,15 +49,19 @@ def modify_query_to_enforce_site_root(query):
     if has_path_criteria:
         # if we have a path criteria it is replaced here by a tgpath
         if has_tgpath_criteria:
-            _remove_criteria_by_index_name(query, "tgpath")
-        idx_criteria = _index_of_criteria(query, "path")
-        new_criteria = dict(query[idx_criteria])
-        new_criteria["i"] = "tgpath"
-        if new_criteria["o"] in PATH_MAP:
-            new_criteria["o"] = PATH_MAP[new_criteria["o"]]
-        query[idx_criteria] = new_criteria
+            query = _remove_criteria_by_index_name(query, "tgpath")
+        # Handle multiple paths
+        idx_criteria = _indices_of_criteria(query, "path")
+        new_criteria = [dict(query[i]) for i in idx_criteria]
+        for i in new_criteria:
+            i['i'] = 'tgpath'
+        for i in new_criteria:
+            if i["o"] in PATH_MAP:
+                i['o'] = PATH_MAP[i['o']]
+        for i, x in enumerate(idx_criteria):
+            query[x] = new_criteria[i]
     elif has_tgpath_criteria:
-        _remove_criteria_by_index_name(query, "tgpath")
+        query = _remove_criteria_by_index_name(query, "tgpath")
 
     # always set path to the portal root in order to prevent the default query
     # modifier to set the path to the navigation root
@@ -71,4 +72,5 @@ def modify_query_to_enforce_site_root(query):
             "v": "/",
         }
     )
+
     return query

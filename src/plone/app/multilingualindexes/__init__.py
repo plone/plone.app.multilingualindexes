@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
 from zope.i18nmessageid import MessageFactory
+from plone.app.querystring import queryparser
 
 from . import patches  # noqa
 
 _ = MessageFactory("plone.app.multilingualindexes")
+
+queryparser.PATH_INDICES |= {'tgpath'}
 
 
 def initialize(context):

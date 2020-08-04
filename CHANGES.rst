@@ -4,7 +4,10 @@ Changelog
 2.1 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Patch that allows for using multiple paths, fixing issue https://github.com/plone/plone.app.multilingualindexes/issues/9
+  [gogobd]
+- User PATH_INDICES as suggested by jensens
+  [gogobd]
 
 
 2.0 (2019-07-12)

@@ -32,22 +32,26 @@ setup(
         "Operating System :: OS Independent",
         "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
     ],
-    keywords="Python Plone",
+    keywords="Python, Plone, multilingual, translation",
     author="Jens W. Klein",
     author_email="jk@kleinundpartner.at",
-    url="https://pypi.python.org/pypi/plone.app.multilingualindexes",
+    url="https://github.com/plone/plone.app.multilingualindexes",
     license="GPL version 2",
     packages=find_packages("src"),
     namespace_packages=["plone", "plone.app"],
     package_dir={"": "src"},
     include_package_data=True,
     zip_safe=False,
-    install_requires=["Products.CMFPlone", "setuptools"],
+    install_requires=[
+        "setuptools",
+        "Products.CMFPlone>=5.2.1",
+        "plone.app.querystring>=1.4.14",
+        "plone.app.theming>=4.1.3",
+    ],
     extras_require={
         "test": [
             "plone.app.testing",
             "plone.app.multilingual[test]",
-            "plone.app.querystring",
         ]
     },
     entry_points="""
