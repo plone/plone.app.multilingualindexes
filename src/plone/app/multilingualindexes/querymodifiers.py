@@ -54,10 +54,10 @@ def modify_query_to_enforce_site_root(query):
         idx_criteria = _indices_of_criteria(query, "path")
         new_criteria = [dict(query[i]) for i in idx_criteria]
         for i in new_criteria:
-            i['i'] = 'tgpath'
+            i["i"] = "tgpath"
         for i in new_criteria:
             if i["o"] in PATH_MAP:
-                i['o'] = PATH_MAP[i['o']]
+                i["o"] = PATH_MAP[i["o"]]
         for i, x in enumerate(idx_criteria):
             query[x] = new_criteria[i]
     elif has_tgpath_criteria:

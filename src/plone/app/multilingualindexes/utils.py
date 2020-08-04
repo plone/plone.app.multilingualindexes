@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from plone import api
 from Products.CMFPlone.utils import safe_hasattr
-from zope.schema._bootstrapinterfaces import ValidationError
 from zope.globalrequest import getRequest
+from zope.schema._bootstrapinterfaces import ValidationError
 
 import json
 

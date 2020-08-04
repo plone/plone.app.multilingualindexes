@@ -20,6 +20,7 @@ from zope.component import getMultiAdapter
 from zope.component import queryAdapter
 from zope.globalrequest import getRequest
 
+
 logger = getLogger(__name__)
 _marker = set()  # must be an empty set, part of logic below
 _REQ_ANNOTATION = "_languagefallback_unindex_docid_to_tg_"

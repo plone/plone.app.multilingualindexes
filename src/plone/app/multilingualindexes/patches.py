@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
-from zope.component import getSiteManager
 from Products.CMFCore import indexing
 from Products.CMFCore.interfaces import IIndexQueueProcessor
 from Products.CMFCore.interfaces import InvalidQueueOperation
+from zope.component import getSiteManager
 
 
 # see https://github.com/zopefoundation/Products.CMFCore/issues/79
+
 
 def process_patched(self):
     self.optimize()
