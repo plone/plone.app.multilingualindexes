@@ -4,6 +4,9 @@ Changelog
 2.2 (unreleased)
 ----------------
 
+- Switch CI to GitHub Actions.
+  [gogobd]
+
 - InitializeClass has moved, fixing issue https://github.com/plone/plone.app.multilingualindexes/issues/13
   [gogobd]
 
