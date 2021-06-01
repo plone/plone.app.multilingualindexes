@@ -4,7 +4,8 @@ Changelog
 2.2 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- InitializeClass has moved, fixing issue https://github.com/plone/plone.app.multilingualindexes/issues/13
+  [gogobd]
 
 
 2.1 (2020-08-04)
