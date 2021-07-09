@@ -1,8 +1,10 @@
 Changelog
 =========
 
-2.2 (unreleased)
+3.0 (unreleased)
 ----------------
+
+- Drop Python Support [jensens]
 
 - Switch CI to GitHub Actions.
   [gogobd]

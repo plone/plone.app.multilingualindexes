@@ -1,6 +1,5 @@
-# -*- coding: utf-8 -*-
-from Acquisition import aq_base
 from AccessControl.class_init import InitializeClass
+from Acquisition import aq_base
 from App.special_dtml import DTMLFile
 from BTrees.OOBTree import OOTreeSet
 from logging import getLogger
@@ -27,8 +26,7 @@ _REQ_ANNOTATION = "_languagefallback_unindex_docid_to_tg_"
 
 
 class LanguageFallbackIndex(UnIndex):
-    """Index returning objects of a requested language or in its fallback
-    """
+    """Index returning objects of a requested language or in its fallback"""
 
     meta_type = "LanguageFallbackIndex"
     query_options = []
@@ -43,7 +41,7 @@ class LanguageFallbackIndex(UnIndex):
     manage_browse = DTMLFile("www/browseIndex", globals())
 
     def __init__(self, id, ignore_ex=None, call_methods=None, extra=None, caller=None):
-        super(LanguageFallbackIndex, self).__init__(
+        super().__init__(
             id,
             ignore_ex=ignore_ex,
             call_methods=call_methods,
@@ -66,8 +64,7 @@ class LanguageFallbackIndex(UnIndex):
         )
 
     def primary_languages_of_fallback(self, lang):
-        """Iterator of primary languages for a given fallback
-        """
+        """Iterator of primary languages for a given fallback"""
         for primary_lang, fallbacks in get_configuration().items():
             if lang in fallbacks:
                 yield primary_lang
@@ -75,8 +72,7 @@ class LanguageFallbackIndex(UnIndex):
     def has_translation_with_higher_prio_fallback(
         self, primary_language, object_language, translations
     ):
-        """Check if a translation exists with a higher priority fallback
-        """
+        """Check if a translation exists with a higher priority fallback"""
         fallback_languages = get_configuration()[primary_language]
         for fallback_lang in fallback_languages:
             if fallback_lang == object_language:
@@ -84,8 +80,8 @@ class LanguageFallbackIndex(UnIndex):
             if fallback_lang in translations:
                 return True
         logger.warn(
-            "Incomplete configuration, object language '{0}' must be one of the "
-            "configured fallback-languages: {1}!".format(
+            "Incomplete configuration, object language '{}' must be one of the "
+            "configured fallback-languages: {}!".format(
                 object_language, fallback_languages
             )
         )
@@ -231,7 +227,7 @@ class LanguageFallbackIndex(UnIndex):
                 # at this point we do not have any TG yet
                 return
         # get one out of tg (enough), because index_object is recursive
-        tg_obj_uids = set(tg_idx._index.get(tg, set())) - set([documentId])
+        tg_obj_uids = set(tg_idx._index.get(tg, set())) - {documentId}
         if not tg_obj_uids:
             # no other translations available, were done
             return
@@ -247,8 +243,7 @@ manage_addLFBIndexForm = DTMLFile("www/addLFBIndex", globals())
 def manage_addLFBIndex(
     context, indexid, extra=None, REQUEST=None, RESPONSE=None, URL3=None
 ):
-    """Add a DateRecurringIndex
-    """
+    """Add a DateRecurringIndex"""
     return context.manage_addIndex(
         indexid,
         "LanguageFallbackIndex",
@@ -268,8 +263,7 @@ def fallback_finder(context, row):
 
 
 def reindex_languagefallback(event):
-    """Object event subscriber to reindex the index 'language_or_fallback'.
-    """
+    """Object event subscriber to reindex the index 'language_or_fallback'."""
     catalog = api.portal.get_tool("portal_catalog")
     if "language_or_fallback" not in catalog.indexes():
         return
@@ -302,6 +296,5 @@ def annotate_documentid_to_tg(obj):
 
 
 def annotate_documentid_to_tg_subscriber(obj, event):
-    """object event subscriber
-    """
+    """object event subscriber"""
     annotate_documentid_to_tg(obj)

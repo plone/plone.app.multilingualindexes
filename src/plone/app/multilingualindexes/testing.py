@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from plone.app.multilingual.testing import PLONE_APP_MULTILINGUAL_PRESET_FIXTURE  # noqa
 from plone.app.robotframework.testing import REMOTE_LIBRARY_BUNDLE_FIXTURE
 from plone.app.testing import FunctionalTesting

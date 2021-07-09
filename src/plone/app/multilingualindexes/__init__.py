@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from . import patches  # noqa
 from plone.app.querystring import queryparser
 from zope.i18nmessageid import MessageFactory

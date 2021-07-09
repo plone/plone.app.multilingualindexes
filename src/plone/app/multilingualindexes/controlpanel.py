@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from plone.app.multilingualindexes import utils
 from plone.app.registry.browser.controlpanel import ControlPanelFormWrapper
 from plone.app.registry.browser.controlpanel import RegistryEditForm
@@ -9,8 +8,8 @@ from zope.schema import Text
 
 class IMultilingualIndexPanel(Interface):
     fallback_languages = Text(
-        title=u"Fallbacks (json)",
-        description=u"""Define what languages can be used
+        title="Fallbacks (json)",
+        description="""Define what languages can be used
                         as fallback languages in search results.
                         This entry must be a valid json dictionary, the
                         key is the language for that you want to define
@@ -27,7 +26,7 @@ class IMultilingualIndexPanel(Interface):
 class MultilingualIndexControlPanel(RegistryEditForm):
     schema = IMultilingualIndexPanel
     schema_prefix = "multilingualindex"
-    label = u"MultilingualIndexPanel"
+    label = "MultilingualIndexPanel"
 
 
 MultiLingualIndexPanelView = layout.wrap_form(

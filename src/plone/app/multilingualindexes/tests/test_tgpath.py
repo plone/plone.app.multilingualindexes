@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from plone.app.multilingual.interfaces import IPloneAppMultilingualInstalled
 from plone.app.multilingualindexes.testing import PAMI_FUNCTIONAL_TESTING
 from plone.dexterity.utils import createContentInContainer
@@ -19,7 +18,7 @@ class TestTGpath(unittest.TestCase):
 
     def test_tg_path_doc_no_trans(self):
         doc = createContentInContainer(
-            self.portal["ca"], "Document", title=u"Test document"
+            self.portal["ca"], "Document", title="Test document"
         )
         from plone.app.multilingual.interfaces import ITG
         from plone.app.multilingualindexes.tgpath import tg_path
@@ -31,7 +30,7 @@ class TestTGpath(unittest.TestCase):
 
     def test_tg_path_docs_same(self):
         doc_ca = createContentInContainer(
-            self.portal["ca"], "Document", title=u"Test document"
+            self.portal["ca"], "Document", title="Test document"
         )
         from plone.app.multilingual import api
 

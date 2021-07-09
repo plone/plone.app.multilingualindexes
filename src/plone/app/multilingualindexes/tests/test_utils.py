@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from plone import api
 from plone.app.multilingualindexes.testing import PAMI_FUNCTIONAL_TESTING
 from plone.app.multilingualindexes.utils import get_configuration
@@ -17,31 +16,31 @@ class TestUtils(unittest.TestCase):
         self.request = self.layer["request"]
 
     def test_get_fallbacks(self):
-        class FakeRequest(object):
+        class FakeRequest:
             pass
 
         request = FakeRequest()
-        self.assertEqual({u"de": [u"en"], u"en": [u"de"]}, get_configuration(request))
+        self.assertEqual({"de": ["en"], "en": ["de"]}, get_configuration(request))
 
     def test_set_bad_fallbacks(self):
         self.assertRaises(
             ValidationError,
             api.portal.set_registry_record,
             "multilingualindex.fallback_languages",
-            u"[[[[[",
+            "[[[[[",
         )
 
     def test_get_fallbacks_caches(self):
-        class FakeRequest(object):
+        class FakeRequest:
             pass
 
         request = FakeRequest()
         api.portal.set_registry_record(
-            "multilingualindex.fallback_languages", u'{"fr": []}'
+            "multilingualindex.fallback_languages", '{"fr": []}'
         )
         self.assertEqual({"fr": []}, get_configuration(request))
         api.portal.set_registry_record(
-            "multilingualindex.fallback_languages", u'{"pt": ["es"]}'
+            "multilingualindex.fallback_languages", '{"pt": ["es"]}'
         )
         # It will be impossible for a user to change the configuration
         # and some content in one request. This is why we cache

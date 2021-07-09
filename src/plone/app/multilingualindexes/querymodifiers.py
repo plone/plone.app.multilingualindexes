@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from plone.app.querystring.interfaces import IQueryModifier
 from zope.interface import provider
 

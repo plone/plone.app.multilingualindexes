@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from plone import api
 from plone.app.multilingual.interfaces import ITranslationManager
 from plone.app.multilingualindexes.testing import PAMI_FUNCTIONAL_TESTING

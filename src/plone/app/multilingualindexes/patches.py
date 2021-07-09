@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from Products.CMFCore import indexing
 from Products.CMFCore.interfaces import IIndexQueueProcessor
 from Products.CMFCore.interfaces import InvalidQueueOperation
