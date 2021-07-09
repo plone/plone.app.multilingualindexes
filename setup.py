@@ -16,7 +16,7 @@ long_description = "\n\n".join(
 
 setup(
     name="plone.app.multilingualindexes",
-    version="2.2.dev0",
+    version="3.0.0.dev0",
     description="Multilingual Catalog Indexes for Plone",
     long_description=long_description,
     # Get more from https://pypi.python.org/pypi?%3Aaction=list_classifiers
@@ -26,6 +26,7 @@ setup(
         "Framework :: Plone",
         "Framework :: Plone :: Addon",
         "Framework :: Plone :: 5.2",
+        "Framework :: Plone :: 6.0",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
