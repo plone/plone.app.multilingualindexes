@@ -1,8 +1,8 @@
 Changelog
 =========
 
-3.0 (unreleased)
-----------------
+3.0.0 (2021-11-16)
+------------------
 
 - Drop Python Support [jensens]
 
