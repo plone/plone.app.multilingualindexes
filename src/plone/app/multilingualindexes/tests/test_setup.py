@@ -18,7 +18,7 @@ class TestSetup(unittest.TestCase):
     def test_product_installed(self):
         """Test if plone.app.multilingualindexes is installed."""
         self.assertTrue(
-            self.installer.isProductInstalled("plone.app.multilingualindexes")
+            self.installer.is_product_installed("plone.app.multilingualindexes")
         )
 
     def test_browserlayer(self):
@@ -38,12 +38,12 @@ class TestUninstall(unittest.TestCase):
     def setUp(self):
         self.portal = self.layer["portal"]
         self.installer = get_installer(self.portal, self.layer["request"])
-        self.installer.uninstallProducts(["plone.app.multilingualindexes"])
+        self.installer.uninstall_product("plone.app.multilingualindexes")
 
     def test_product_uninstalled(self):
         """Test if plone.app.multilingualindexes is cleanly uninstalled."""
         self.assertFalse(
-            self.installer.isProductInstalled("plone.app.multilingualindexes")
+            self.installer.is_product_installed("plone.app.multilingualindexes")
         )
 
     def test_browserlayer_removed(self):

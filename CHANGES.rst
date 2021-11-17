@@ -4,13 +4,13 @@ Changelog
 3.0.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Fix import for Plone 6 and add CI [jensens]
 
 
 3.0.0 (2021-11-16)
 ------------------
 
-- Drop Python Support [jensens]
+- Drop Python 2 Support [jensens]
 
 - Switch CI to GitHub Actions.
   [gogobd]

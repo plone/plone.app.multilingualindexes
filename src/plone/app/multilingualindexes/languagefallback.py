@@ -12,7 +12,7 @@ from plone.app.multilingualindexes.utils import get_configuration
 from plone.indexer.interfaces import IIndexableObject
 from Products.CMFPlone.utils import safe_hasattr
 from Products.DateRecurringIndex.index import DateRecurringIndex
-from Products.PluginIndexes.common.UnIndex import UnIndex
+from Products.PluginIndexes.unindex import UnIndex
 from Products.ZCatalog.Catalog import Catalog
 from ZODB.POSException import ConflictError
 from zope.component import getMultiAdapter
