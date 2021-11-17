@@ -4,7 +4,7 @@ Changelog
 3.0.2 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Make request caching more test friendly (where there is no request). [jensens]
 
 
 3.0.1 (2021-11-17)

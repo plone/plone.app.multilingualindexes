@@ -214,11 +214,14 @@ class LanguageFallbackIndex(UnIndex):
         # reindex other object in translationgroup
         # the current tg must be available annotated
         tg = None
-        annotation = getattr(getRequest(), _REQ_ANNOTATION, None)
-        if annotation:
-            tg = annotation.get(documentId, None)
-            if tg:
-                del annotation[documentId]
+        request = getRequest()
+        if request:
+            # in tests there might be no request
+            annotation = getattr(getRequest(), _REQ_ANNOTATION, None)
+            if annotation:
+                tg = annotation.get(documentId, None)
+                if tg:
+                    del annotation[documentId]
         if tg is None:
             # annotations are only written on move/rename/delete
             # if this was not hte case we really must have it available

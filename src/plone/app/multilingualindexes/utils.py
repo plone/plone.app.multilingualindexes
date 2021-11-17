@@ -15,7 +15,8 @@ def get_configuration(request=None):
         fallbacks = json.loads(
             api.portal.get_registry_record("multilingualindex.fallback_languages")
         )
-        setattr(request, "_plone_app_multilingualindexes_fallbacks_", fallbacks)
+        if request:
+            setattr(request, "_plone_app_multilingualindexes_fallbacks_", fallbacks)
         return fallbacks
 
 
